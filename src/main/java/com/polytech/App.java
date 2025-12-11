@@ -38,12 +38,12 @@ public class App {
 
         // Validate by player
         System.out.println("Validation par le joueur...");
-        episodeCtrl.validerParJoueur("Capitaine Jack", "An 2");
+        episodeCtrl.validerEpisode("Capitaine Jack", "An 2", "Joueur1");
         System.out.println("Épisode après validation joueur: " + episode.getStatut());
 
         // Validate by MJ
         System.out.println("Validation par le MJ...");
-        episodeCtrl.validerParMJ("Capitaine Jack", "An 2");
+        episodeCtrl.validerEpisode("Capitaine Jack", "An 2", "MJ1");
         System.out.println("Épisode final: " + episode.getStatut());
 
         System.out.println("Scénario terminé !");

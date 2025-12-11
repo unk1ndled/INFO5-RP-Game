@@ -3,6 +3,7 @@ package com.polytech.controller;
 import com.polytech.model.*;
 import com.polytech.repository.PersonnageRepository;
 import com.polytech.repository.PartieRepository;
+import com.polytech.repository.UtilisateurRepository;
 
 public class EpisodeController {
     private PersonnageRepository personnageRepo = PersonnageRepository.getInstance();
@@ -23,28 +24,23 @@ public class EpisodeController {
         Episode episode = personnage.getBiographie().getEpisodes().stream()
                 .filter(e -> e.getDateRelative().equals(dateRelative)).findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Episode not found"));
-        if (episode.getStatut() != Episode.Status.BROUILLON) {
+        if (episode.getStatut() != Episode.Status.DRAFT) {
             throw new IllegalStateException("Cannot modify non-draft episode");
         }
         // Modify content, but since simple, perhaps replace
     }
 
-    public void validerParJoueur(String nomPersonnage, String dateRelative) {
+    public void validerEpisode(String nomPersonnage, String dateRelative, String acteurPseudo) {
         Personnage personnage = personnageRepo.findByNom(nomPersonnage)
                 .orElseThrow(() -> new IllegalArgumentException("Personnage not found"));
         Episode episode = personnage.getBiographie().getEpisodes().stream()
                 .filter(e -> e.getDateRelative().equals(dateRelative)).findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Episode not found"));
-        if (episode.getStatut() == Episode.Status.BROUILLON) {
-            episode.setStatut(Episode.Status.EN_ATTENTE);
-        } else if (episode.getStatut() == Episode.Status.EN_ATTENTE) {
-            episode.setStatut(Episode.Status.VALIDE);
-        }
-    }
 
-    public void validerParMJ(String nomPersonnage, String dateRelative) {
-        // Similar to above
-        validerParJoueur(nomPersonnage, dateRelative);
+        Utilisateur acteur = UtilisateurRepository.getInstance().findByPseudo(acteurPseudo)
+                .orElseThrow(() -> new IllegalArgumentException("Acteur not found"));
+
+        episode.validate(acteur, personnage.getJoueur(), personnage.getMeneurDeJeu());
     }
 
     public void supprimerEpisode(String nomPersonnage, String dateRelative) {
@@ -53,20 +49,11 @@ public class EpisodeController {
         Episode episode = personnage.getBiographie().getEpisodes().stream()
                 .filter(e -> e.getDateRelative().equals(dateRelative)).findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Episode not found"));
-        if (episode.getStatut() == Episode.Status.VALIDE) {
+        if (episode.getStatut() == Episode.Status.VALIDATED) {
             throw new IllegalStateException("Cannot delete validated episode");
         }
         personnage.getBiographie().getEpisodes().remove(episode);
     }
 
-    public void revelerParagrapheSecret(String nomPersonnage, String dateRelative, int index) {
-        Personnage personnage = personnageRepo.findByNom(nomPersonnage)
-                .orElseThrow(() -> new IllegalArgumentException("Personnage not found"));
-        Episode episode = personnage.getBiographie().getEpisodes().stream()
-                .filter(e -> e.getDateRelative().equals(dateRelative)).findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Episode not found"));
-        if (index < episode.getParagraphesSecrets().size()) {
-            episode.getParagraphesSecrets().get(index).setRevele(true);
-        }
-    }
+
 }

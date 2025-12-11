@@ -9,18 +9,65 @@ public class Episode {
     private List<ParagrapheSecret> paragraphesSecrets = new ArrayList<>();
     private Partie partieLiee; // optional
 
+    // Double validation flags
+    private boolean isValidatedByPlayer;
+    private boolean isValidatedByMJ;
+
     public enum Status {
-        BROUILLON, EN_ATTENTE, VALIDE
+        DRAFT, VALIDATED
     }
 
     public Episode(String dateRelative) {
         this.dateRelative = dateRelative;
-        this.statut = Status.BROUILLON;
+        this.statut = Status.DRAFT;
         this.paragraphesSecrets = new ArrayList<>();
+        this.isValidatedByPlayer = false;
+        this.isValidatedByMJ = false;
     }
 
     public void ajouterParagrapheSecret(ParagrapheSecret paragraphe) {
         paragraphesSecrets.add(paragraphe);
+    }
+
+    // Business logic: validate method
+    public void validate(Utilisateur actor, Joueur owner, MeneurDeJeu mj) {
+        if (statut == Status.VALIDATED) {
+            throw new IllegalStateException("Cannot validate an already validated episode");
+        }
+
+        boolean isOwner = actor.equals(owner);
+        boolean isMJ = actor.equals(mj);
+
+        if (isOwner) {
+            isValidatedByPlayer = true;
+        }
+        if (isMJ) {
+            isValidatedByMJ = true;
+        }
+        if (!isOwner && !isMJ) {
+            throw new IllegalArgumentException("Actor must be either the owner or the MJ");
+        }
+
+        // Transition to VALIDATED based on validation requirements
+        boolean ownerIsMJ = owner.equals(mj);
+        if (ownerIsMJ) {
+            // If owner is MJ, only one validation is needed
+            if (isValidatedByPlayer || isValidatedByMJ) {
+                statut = Status.VALIDATED;
+            }
+        } else {
+            // If owner is not MJ, both validations are needed
+            if (isValidatedByPlayer && isValidatedByMJ) {
+                statut = Status.VALIDATED;
+            }
+        }
+    }
+
+    // Immutability: prevent modifications if validated
+    private void checkImmutability() {
+        if (statut == Status.VALIDATED) {
+            throw new IllegalStateException("Cannot modify a validated episode");
+        }
     }
 
     public String getDateRelative() {
@@ -28,6 +75,7 @@ public class Episode {
     }
 
     public void setDateRelative(String dateRelative) {
+        checkImmutability();
         this.dateRelative = dateRelative;
     }
 
@@ -35,15 +83,12 @@ public class Episode {
         return statut;
     }
 
-    public void setStatut(Status statut) {
-        this.statut = statut;
-    }
-
     public List<ParagrapheSecret> getParagraphesSecrets() {
         return paragraphesSecrets;
     }
 
     public void setParagraphesSecrets(List<ParagrapheSecret> paragraphesSecrets) {
+        checkImmutability();
         this.paragraphesSecrets = paragraphesSecrets;
     }
 
@@ -52,6 +97,16 @@ public class Episode {
     }
 
     public void setPartieLiee(Partie partieLiee) {
+        checkImmutability();
         this.partieLiee = partieLiee;
+    }
+
+    // Getters for validation flags (for testing)
+    public boolean isValidatedByPlayer() {
+        return isValidatedByPlayer;
+    }
+
+    public boolean isValidatedByMJ() {
+        return isValidatedByMJ;
     }
 }

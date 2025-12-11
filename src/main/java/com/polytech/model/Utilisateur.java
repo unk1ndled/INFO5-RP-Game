@@ -24,4 +24,17 @@ public class Utilisateur {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || !(obj instanceof Utilisateur)) return false;
+        Utilisateur that = (Utilisateur) obj;
+        return pseudo.equals(that.pseudo);
+    }
+
+    @Override
+    public int hashCode() {
+        return pseudo.hashCode();
+    }
 }

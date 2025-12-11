@@ -2,11 +2,11 @@ package com.polytech.model;
 
 public class ParagrapheSecret {
     private String texte;
-    private boolean revele;
+    private boolean isSecret;
 
-    public ParagrapheSecret(String texte) {
+    public ParagrapheSecret(String texte, boolean isSecret) {
         this.texte = texte;
-        this.revele = false;
+        this.isSecret = isSecret;
     }
 
     public String getTexte() {
@@ -17,11 +17,11 @@ public class ParagrapheSecret {
         this.texte = texte;
     }
 
-    public boolean isRevele() {
-        return revele;
+    public boolean isSecret() {
+        return isSecret;
     }
 
-    public void setRevele(boolean revele) {
-        this.revele = revele;
+    public void setSecret(boolean secret) {
+        isSecret = secret;
     }
 }
