@@ -2,7 +2,6 @@ package com.polytech.view;
 
 import com.polytech.controller.PersonnageController;
 import com.polytech.model.*;
-import com.polytech.repository.PersonnageRepository;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -163,8 +162,7 @@ public class CreationPersonnagePanel extends JPanel {
 
     private void refreshMJTable() {
         tableModel.setRowCount(0);
-        PersonnageRepository repo = PersonnageRepository.getInstance();
-        List<Personnage> personnages = repo.getPersonnages();
+        List<Personnage> personnages = personnageCtrl.getPersonnages();
 
         for (Personnage p : personnages) {
             if (p.getMeneurDeJeu() == null) { // Only show unvalidated characters
@@ -204,10 +202,7 @@ public class CreationPersonnagePanel extends JPanel {
 
                     // Add initial biography episode if provided
                     if (!biographieInitiale.isEmpty()) {
-                        Episode episodeInitial = new Episode(dateNaissance); // Use birth date as episode date
-                        ParagrapheSecret paraBio = new ParagrapheSecret(biographieInitiale, false); // Public initial biography
-                        episodeInitial.getParagraphesSecrets().add(paraBio);
-                        personnage.getBiographie().ajouterEpisode(episodeInitial);
+                        personnageCtrl.ajouterEpisodeBiographieInitiale(nom, biographieInitiale, dateNaissance);
                     }
 
                     JOptionPane.showMessageDialog(mainApp,

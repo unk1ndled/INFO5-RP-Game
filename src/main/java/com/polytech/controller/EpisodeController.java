@@ -13,7 +13,9 @@ public class EpisodeController {
         Personnage personnage = personnageRepo.findByNom(nomPersonnage)
                 .orElseThrow(() -> new IllegalArgumentException("Personnage not found"));
         Episode episode = new Episode(dateRelative);
-        // Add content as paragraphe, assume public for simplicity, or handle later
+        // Add content as paragraphe, assume public for simplicity
+        ParagrapheSecret paragraphe = new ParagrapheSecret(contenu, false);
+        episode.ajouterParagrapheSecret(paragraphe);
         personnage.getBiographie().ajouterEpisode(episode);
         return episode;
     }
@@ -53,6 +55,42 @@ public class EpisodeController {
             throw new IllegalStateException("Cannot delete validated episode");
         }
         personnage.getBiographie().getEpisodes().remove(episode);
+    }
+
+    public void revelerSecret(String nomPersonnage, String dateRelative, int paragrapheIndex) {
+        Personnage personnage = personnageRepo.findByNom(nomPersonnage)
+                .orElseThrow(() -> new IllegalArgumentException("Personnage not found"));
+        Episode episode = personnage.getBiographie().getEpisodes().stream()
+                .filter(e -> e.getDateRelative().equals(dateRelative)).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Episode not found"));
+
+        if (paragrapheIndex < 0 || paragrapheIndex >= episode.getParagraphesSecrets().size()) {
+            throw new IllegalArgumentException("Invalid paragraph index");
+        }
+
+        ParagrapheSecret para = episode.getParagraphesSecrets().get(paragrapheIndex);
+        para.setSecret(false);
+    }
+
+    public Episode creerEpisodeDraft(String nomPersonnage, String dateRelative) {
+        Personnage personnage = personnageRepo.findByNom(nomPersonnage)
+                .orElseThrow(() -> new IllegalArgumentException("Personnage not found"));
+        Episode episode = new Episode(dateRelative);
+        personnage.getBiographie().ajouterEpisode(episode);
+        return episode;
+    }
+
+    public void ajouterParagrapheAEpisode(String nomPersonnage, String dateRelative, String contenu, boolean isSecret) {
+        Personnage personnage = personnageRepo.findByNom(nomPersonnage)
+                .orElseThrow(() -> new IllegalArgumentException("Personnage not found"));
+        Episode episode = personnage.getBiographie().getEpisodes().stream()
+                .filter(e -> e.getDateRelative().equals(dateRelative)).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Episode not found"));
+        if (episode.getStatut() != Episode.Status.DRAFT) {
+            throw new IllegalStateException("Cannot add paragraphs to non-draft episode");
+        }
+        ParagrapheSecret paragraphe = new ParagrapheSecret(contenu, isSecret);
+        episode.ajouterParagrapheSecret(paragraphe);
     }
 
 

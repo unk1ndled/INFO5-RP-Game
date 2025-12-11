@@ -125,10 +125,7 @@ L'application inclut des tests unitaires pour vérifier :
 - Les permissions d'accès aux biographies
 - L'immutabilité des épisodes validés
 
-## Auteurs
 
-- Étudiant en INFO3 Polytech
-- Projet Génie Logiciel 2025-2026
 
 ## Notes Techniques
 

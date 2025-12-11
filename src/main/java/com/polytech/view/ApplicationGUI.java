@@ -1,5 +1,6 @@
 package com.polytech.view;
 
+import com.polytech.*;
 import com.polytech.controller.*;
 import com.polytech.model.*;
 import com.polytech.repository.*;
@@ -61,21 +62,14 @@ public class ApplicationGUI extends JFrame {
     }
 
     private void setDefaultUser() {
-        // Create default users
-        Univers univers = new Univers("Univers des Pirates");
-        UniversRepository.getInstance().ajouterUnivers(univers);
+        // Initialize default data
+        DataInitializer.initializeDefaultData();
 
-        Joueur alice = new Joueur("Alice", "alice@test.com");
-        Joueur abdelRaouf = new Joueur("Abdel Raouf", "abdel.raouf@test.com");
-        MeneurDeJeu bob = new MeneurDeJeu("Bob", "bob@test.com");
-        Utilisateur visitor = new Utilisateur("Visiteur", "visitor@test.com");
-
-        UtilisateurRepository.getInstance().ajouterUtilisateur(alice);
-        UtilisateurRepository.getInstance().ajouterUtilisateur(abdelRaouf);
-        UtilisateurRepository.getInstance().ajouterUtilisateur(bob);
-        UtilisateurRepository.getInstance().ajouterUtilisateur(visitor);
-
-        setCurrentUser(visitor); // Start as visitor
+        // Start as visitor
+        Utilisateur visitor = UtilisateurRepository.getInstance().findByPseudo("Visiteur").orElse(null);
+        if (visitor != null) {
+            setCurrentUser(visitor);
+        }
     }
 
     public void setCurrentUser(Utilisateur user) {
@@ -116,6 +110,10 @@ public class ApplicationGUI extends JFrame {
 
     public EpisodeController getEpisodeController() {
         return episodeCtrl;
+    }
+
+    public Utilisateur findUserByPseudo(String pseudo) {
+        return UtilisateurRepository.getInstance().findByPseudo(pseudo).orElse(null);
     }
 
     public static void main(String[] args) {

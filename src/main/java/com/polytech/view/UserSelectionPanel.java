@@ -1,7 +1,6 @@
 package com.polytech.view;
 
 import com.polytech.model.*;
-import com.polytech.repository.UtilisateurRepository;
 
 import javax.swing.*;
 import java.awt.*;
@@ -75,17 +74,16 @@ public class UserSelectionPanel extends JPanel {
     private class UserSelectionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            UtilisateurRepository repo = UtilisateurRepository.getInstance();
             Utilisateur selectedUser = null;
 
             if (e.getSource() == btnVisitor) {
-                selectedUser = repo.findByPseudo("Visiteur").orElse(null);
+                selectedUser = mainApp.findUserByPseudo("Visiteur");
             } else if (e.getSource() == btnAlice) {
-                selectedUser = repo.findByPseudo("Alice").orElse(null);
+                selectedUser = mainApp.findUserByPseudo("Alice");
             } else if (e.getSource() == btnAbdelRaouf) {
-                selectedUser = repo.findByPseudo("Abdel Raouf").orElse(null);
+                selectedUser = mainApp.findUserByPseudo("Abdel Raouf");
             } else if (e.getSource() == btnBob) {
-                selectedUser = repo.findByPseudo("Bob").orElse(null);
+                selectedUser = mainApp.findUserByPseudo("Bob");
             }
 
             if (selectedUser != null) {

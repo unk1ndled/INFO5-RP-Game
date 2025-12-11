@@ -2,7 +2,6 @@ package com.polytech.view;
 
 import com.polytech.controller.EpisodeController;
 import com.polytech.model.*;
-import com.polytech.repository.PersonnageRepository;
 
 import javax.swing.*;
 import java.awt.*;
@@ -220,8 +219,7 @@ public class EpisodeManagementPanel extends JPanel {
 
     private void refreshPersonnages() {
         cmbPersonnages.removeAllItems();
-        PersonnageRepository repo = PersonnageRepository.getInstance();
-        List<Personnage> personnages = repo.getPersonnages();
+        List<Personnage> personnages = mainApp.getPersonnageController().getPersonnages();
 
         for (Personnage p : personnages) {
             cmbPersonnages.addItem(p.getNom() + " (" + p.getJoueur().getPseudo() + ")");
@@ -232,8 +230,7 @@ public class EpisodeManagementPanel extends JPanel {
         String selected = (String) cmbPersonnages.getSelectedItem();
         if (selected != null) {
             String nomPersonnage = selected.split(" \\(")[0]; // Extract name before parentheses
-            PersonnageRepository repo = PersonnageRepository.getInstance();
-            selectedPersonnage = repo.findByNom(nomPersonnage).orElse(null);
+            selectedPersonnage = mainApp.getPersonnageController().findByNom(nomPersonnage);
             updateDisplay();
             updateDraftList();
         }
@@ -393,15 +390,18 @@ public class EpisodeManagementPanel extends JPanel {
                         return;
                     }
 
-                    // Create episode with all paragraphs
-                    currentEpisode = episodeCtrl.creerEpisode(
+                    // Create draft episode
+                    currentEpisode = episodeCtrl.creerEpisodeDraft(
                         selectedPersonnage.getNom(),
-                        episodeDate,
-                        "Épisode créé avec " + episodeParagraphs.size() + " paragraphes");
+                        episodeDate);
 
                     // Add all paragraphs to the episode
                     for (ParagrapheSecret para : episodeParagraphs) {
-                        currentEpisode.getParagraphesSecrets().add(para);
+                        episodeCtrl.ajouterParagrapheAEpisode(
+                            selectedPersonnage.getNom(),
+                            episodeDate,
+                            para.getTexte(),
+                            para.isSecret());
                     }
 
                     JOptionPane.showMessageDialog(mainApp,

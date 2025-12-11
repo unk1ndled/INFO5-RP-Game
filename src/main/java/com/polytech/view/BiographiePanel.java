@@ -1,7 +1,6 @@
 package com.polytech.view;
 
 import com.polytech.model.*;
-import com.polytech.repository.PersonnageRepository;
 
 import javax.swing.*;
 import java.awt.*;
@@ -87,8 +86,7 @@ public class BiographiePanel extends JPanel {
 
     private void refreshPersonnages() {
         cmbPersonnages.removeAllItems();
-        PersonnageRepository repo = PersonnageRepository.getInstance();
-        List<Personnage> personnages = repo.getPersonnages();
+        List<Personnage> personnages = mainApp.getPersonnageController().getPersonnages();
 
         for (Personnage p : personnages) {
             cmbPersonnages.addItem(p.getNom() + " (" + p.getJoueur().getPseudo() + ")");
@@ -104,8 +102,7 @@ public class BiographiePanel extends JPanel {
         }
 
         String nomPersonnage = selected.split(" \\(")[0];
-        PersonnageRepository repo = PersonnageRepository.getInstance();
-        Personnage personnage = repo.findByNom(nomPersonnage).orElse(null);
+        Personnage personnage = mainApp.getPersonnageController().findByNom(nomPersonnage);
 
         if (personnage == null) {
             txtBiographie.setText("Personnage non trouvé.");
@@ -266,33 +263,41 @@ public class BiographiePanel extends JPanel {
                 return;
             }
 
-            // Find and reveal the secret
+            // Find and reveal the secret using controller
             String selected = (String) cmbPersonnages.getSelectedItem();
             if (selected != null) {
                 String nomPersonnage = selected.split(" \\(")[0];
-                PersonnageRepository repo = PersonnageRepository.getInstance();
-                Personnage personnage = repo.findByNom(nomPersonnage).orElse(null);
+                Personnage personnage = mainApp.getPersonnageController().findByNom(nomPersonnage);
 
                 if (personnage != null) {
-                    // Find the secret paragraph and reveal it
+                    // Find the secret paragraph index globally
                     int secretCount = 0;
+                    boolean found = false;
                     for (Episode episode : personnage.getBiographie().getEpisodes()) {
-                        for (ParagrapheSecret para : episode.getParagraphesSecrets()) {
+                        for (int i = 0; i < episode.getParagraphesSecrets().size(); i++) {
+                            ParagrapheSecret para = episode.getParagraphesSecrets().get(i);
                             if (para.isSecret()) {
                                 if (secretCount == selectedIndex) {
-                                    para.setSecret(false); // Reveal the secret
-                                    JOptionPane.showMessageDialog(mainApp,
-                                        "Secret révélé avec succès!\nLe contenu est maintenant public.",
-                                        "Révélation réussie",
-                                        JOptionPane.INFORMATION_MESSAGE);
-
-                                    // Refresh the display
-                                    displayBiographie();
-                                    return;
+                                    // Use controller to reveal secret
+                                    mainApp.getEpisodeController().revelerSecret(
+                                        nomPersonnage, episode.getDateRelative(), i);
+                                    found = true;
+                                    break;
                                 }
                                 secretCount++;
                             }
                         }
+                        if (found) break;
+                    }
+
+                    if (found) {
+                        JOptionPane.showMessageDialog(mainApp,
+                            "Secret révélé avec succès!\nLe contenu est maintenant public.",
+                            "Révélation réussie",
+                            JOptionPane.INFORMATION_MESSAGE);
+
+                        // Refresh the display
+                        displayBiographie();
                     }
                 }
             }
