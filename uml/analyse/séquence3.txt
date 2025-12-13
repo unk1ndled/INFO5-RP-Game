@@ -1,34 +1,40 @@
 @startuml
-actor "Meneur de Jeu" as MJ
+actor "Utilisateur" as User
 participant "Système" as S
 
 == Création de la proposition de partie ==
-MJ -> S : Créer une proposition de partie
-S -> MJ : Demander informations\n(titre, univers, date, ...)
-MJ -> S : Fournir informations
-S -> MJ : Proposition créée\n(status = PROPOSITION)
+User -> S : Créer une proposition de partie
+S -> User : Demander informations\n(titre, univers, résumé initial,\ndate, lieu)
+User -> S : Fournir informations
+S -> User : Proposition créée\n(utilisateur devient MJ,\nstatus = PROPOSITION)
 
-== Préparation de la partie ==
-MJ -> S : Ajouter un personnage à la partie
-S -> MJ : Personnage ajouté
+== Gestion des participants ==
+User -> S : Lister personnages disponibles\n(même univers, MJ assigné)
+S -> User : Liste des personnages
+User -> S : Ajouter personnage à la partie
+S -> S : Vérifier contraintes\n(univers, MJ, pas déjà ajouté)
+S -> User : Personnage ajouté
 
-alt Gestion de la proposition 
-    MJ -> S : Retirer un personnage de la partie
-    S -> MJ : Personnage retiré
-else
-    MJ -> S : Modifier les informations de la proposition
-    S -> MJ : Informations mises à jour
+alt Gestion participants
+    User -> S : Retirer personnage de la partie
+    S -> S : Vérifier partie non terminée
+    S -> User : Personnage retiré
 end
 
-alt Suppression avant la partie
-    MJ -> S : Supprimer la proposition
-    S -> MJ : Proposition supprimée
+alt Suppression proposition
+    User -> S : Supprimer proposition
+    S -> S : Vérifier partie non terminée
+    S -> User : Proposition supprimée
 end
 
-== Finalisation ==
-MJ -> S : Saisir le résumé de l'aventure
-S -> MJ : Résumé enregistré
+== Finalisation de la partie ==
+User -> S : Finaliser partie
+S -> User : Demander résumé des événements
+User -> S : Fournir résumé
+S -> User : Partie terminée\n(status = AVENTURE, terminee = true)
 
-MJ -> S : Annoncer la fin de la partie
-S -> MJ : Partie clôturée\n(status = AVENTURE,\ninfos archivées)
+S -> S : Créer épisodes automatiques\n(pour chaque participant)
+S -> S : Ajouter résumé comme épisode\ndans biographie du participant
+
+note right : Partie maintenant immuable,\nparticipants ne peuvent plus\nêtre modifiés, transferts\nbloqués si participation active
 @enduml
