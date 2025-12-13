@@ -1,0 +1,57 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class Utilisateur {
+    - pseudo
+    - email
+}
+
+class Joueur {
+}
+
+Utilisateur <|-- Joueur
+
+class MeneurDeJeu {
+}
+
+Joueur <|-- MeneurDeJeu
+
+class Personnage {
+    - nom
+    - dateNaissance
+    - profession
+    - portrait
+}
+
+class Biographie {
+}
+
+class Episode {
+    - dateRelative
+    - statut : {brouillon, enAttente, validé}
+}
+
+class ParagrapheSecret {
+    - texte
+    - revele : boolean
+}
+
+Personnage *-- Biographie : a
+Biographie *-- Episode : contient
+Episode *-- ParagrapheSecret : contient
+
+class Univers {
+}
+
+class Partie {
+    - titre
+    - resumeInitial
+    - statut : {proposition, aventure}
+}
+
+Joueur "1" *-- "0..*" Personnage : possède
+MeneurDeJeu "1" *-- "0..*" Partie : organise
+Partie "0..1" *-- "0..*" Personnage : participants
+Episode "0..1" *-- "1" Partie : lid
+@enduml
+

@@ -1,0 +1,32 @@
+@startuml
+actor "Utilisateur" as U
+participant "Système" as S
+
+== Saisie d'un épisode ==
+U -> S : Créer un nouvel épisode
+S -> U : Demander contenu de l'épisode
+U -> S : Fournir contenu\n(texte public + secrets)
+S -> U : Épisode enregistré\n(status = brouillon)
+
+== Modification (optionnelle) ==
+U -> S : Modifier épisode\n(si non validé)
+S -> U : Épisode mis à jour
+
+== Validation et visibilité ==
+U -> S : Valider épisode
+alt Une seule validation
+    S -> U : Épisode en attente\n(seconde validation)
+else Validation par Joueur et MJ
+    S -> U : Épisode validé\n(visible publiquement)
+end
+
+== Suppression ==
+alt Épisode non validé
+    U -> S : Supprimer épisode
+    S -> U : Épisode supprimé
+else Épisode validé
+    U -> S : Supprimer épisode
+    S -> U : Suppression refusée
+end
+@enduml
+

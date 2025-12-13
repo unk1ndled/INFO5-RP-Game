@@ -1,0 +1,13 @@
+@startuml
+[*] --> DRAFT
+
+DRAFT : statut = DRAFT
+DRAFT : validations partielles possibles\n(isValidatedByPlayer / isValidatedByMJ)
+
+DRAFT --> DRAFT : modifierEpisode()\nvalidation partielle
+DRAFT --> VALIDATED : validerEpisode()\n(validations requises complètes)
+DRAFT --> [*] : supprimerEpisode()
+
+VALIDATED : statut = VALIDATED
+VALIDATED : état final\n(non modifiable, non supprimable)
+@enduml

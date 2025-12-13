@@ -1,0 +1,29 @@
+@startuml
+actor Joueur
+participant EpisodeManagementPanel
+participant EpisodeController
+participant PersonnageRepository
+participant UtilisateurRepository
+participant Personnage
+participant Biographie
+participant Episode
+
+Joueur -> EpisodeManagementPanel : saisir nouvel épisode
+EpisodeManagementPanel -> EpisodeController : creerEpisode(nomPersonnage, dateRelative, contenu)
+
+EpisodeController -> PersonnageRepository : findByNom(nomPersonnage)
+EpisodeController -> Episode : new Episode(dateRelative)
+EpisodeController -> Personnage : getBiographie()
+EpisodeController -> Biographie : ajouterEpisode(episode)
+
+Joueur -> EpisodeManagementPanel : modifier épisode
+EpisodeManagementPanel -> EpisodeController : modifierEpisode(nomPersonnage, dateRelative, nouveauContenu)
+
+Joueur -> EpisodeManagementPanel : valider épisode
+EpisodeManagementPanel -> EpisodeController : validerEpisode(nomPersonnage, dateRelative, acteurPseudo)
+EpisodeController -> UtilisateurRepository : findByPseudo(acteurPseudo)
+EpisodeController -> Episode : validate(acteur, joueur, meneurDeJeu)
+
+Joueur -> EpisodeManagementPanel : supprimer épisode
+EpisodeManagementPanel -> EpisodeController : supprimerEpisode(nomPersonnage, dateRelative)
+@enduml

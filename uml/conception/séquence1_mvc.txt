@@ -1,0 +1,22 @@
+@startuml
+actor Joueur
+actor "Meneur de Jeu" as MJ
+participant CreationPersonnagePanel
+participant PersonnageController
+participant UniversRepository
+participant UtilisateurRepository
+participant PersonnageRepository
+participant Personnage
+
+Joueur -> CreationPersonnagePanel : saisir données personnage
+CreationPersonnagePanel -> PersonnageController : creerPersonnage(nom, dateNaissance, profession, portrait, universNom, joueurPseudo)
+
+PersonnageController -> UniversRepository : findByNom(universNom)
+PersonnageController -> UtilisateurRepository : findByPseudo(joueurPseudo)
+PersonnageController -> Personnage : new Personnage(...)
+PersonnageController -> PersonnageRepository : ajouterPersonnage(personnage)
+
+MJ -> PersonnageController : accepterPersonnage(nomPersonnage, mjPseudo)
+PersonnageController -> UtilisateurRepository : findByPseudo(mjPseudo)
+PersonnageController -> Personnage : setMeneurDeJeu(mj)
+@enduml
