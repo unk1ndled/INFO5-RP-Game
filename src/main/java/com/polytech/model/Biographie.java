@@ -1,6 +1,7 @@
 package com.polytech.model;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,7 +17,20 @@ public class Biographie {
     }
 
     public List<Episode> getEpisodes() {
-        return episodes;
+        return episodes.stream()
+                .sorted(Comparator.comparing(Episode::getDateRelative))
+                .collect(Collectors.toList());
+    }
+
+    public List<Episode> getEpisodesPublics() {
+        return episodes.stream()
+                .filter(Episode::isVisiblePublic)
+                .sorted(Comparator.comparing(Episode::getDateRelative))
+                .collect(Collectors.toList());
+    }
+
+    public List<Episode> getEpisodesPrives() {
+        return getEpisodes(); // Private view sees all, sorted
     }
 
     public void setEpisodes(List<Episode> episodes) {

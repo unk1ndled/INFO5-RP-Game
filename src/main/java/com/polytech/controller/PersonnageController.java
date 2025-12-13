@@ -18,6 +18,7 @@ public class PersonnageController {
         Joueur joueur = (Joueur) userRepo.findByPseudo(joueurPseudo)
                 .orElseThrow(() -> new IllegalArgumentException("Joueur not found"));
         Personnage personnage = new Personnage(nom, dateNaissance, profession, portrait, univers, joueur);
+        personnage.setStatut(Personnage.StatutPersonnage.PROPOSE);
         personnageRepo.ajouterPersonnage(personnage);
         return personnage;
     }
@@ -27,7 +28,13 @@ public class PersonnageController {
                 .orElseThrow(() -> new IllegalArgumentException("Personnage not found"));
         MeneurDeJeu mj = (MeneurDeJeu) userRepo.findByPseudo(mjPseudo)
                 .orElseThrow(() -> new IllegalArgumentException("MJ not found"));
+
+        if (personnage.getStatut() != Personnage.StatutPersonnage.PROPOSE) {
+            throw new IllegalStateException("Character already accepted");
+        }
+
         personnage.setMeneurDeJeu(mj);
+        personnage.setStatut(Personnage.StatutPersonnage.ACCEPTE);
     }
 
     public void refuserPersonnage(String nomPersonnage) {
@@ -53,5 +60,56 @@ public class PersonnageController {
         personnage.getBiographie().ajouterEpisode(episodeInitial);
     }
 
-    // Other methods as needed
+    public Biographie getBiographiePrivee(String nomPersonnage, String pseudoUtilisateur) {
+        Personnage personnage = personnageRepo.findByNom(nomPersonnage)
+                .orElseThrow(() -> new IllegalArgumentException("Personnage not found"));
+        Utilisateur utilisateur = userRepo.findByPseudo(pseudoUtilisateur)
+                .orElseThrow(() -> new IllegalArgumentException("Utilisateur not found"));
+
+        if (!utilisateur.equals(personnage.getJoueur()) && !utilisateur.equals(personnage.getMeneurDeJeu())) {
+            throw new IllegalArgumentException("Unauthorized access to private biography");
+        }
+
+        return personnage.getBiographie();
+    }
+
+    public void transfererJoueur(String nomPersonnage, String nouveauJoueurPseudo) {
+        Personnage personnage = personnageRepo.findByNom(nomPersonnage)
+                .orElseThrow(() -> new IllegalArgumentException("Personnage not found"));
+
+        if (personnage.participeAPartieNonTerminee()) {
+            throw new IllegalStateException("Cannot transfer character in unfinished party");
+        }
+
+        Joueur nouveauJoueur = (Joueur) userRepo.findByPseudo(nouveauJoueurPseudo)
+                .orElseThrow(() -> new IllegalArgumentException("Nouveau joueur not found"));
+
+        personnage.setJoueur(nouveauJoueur);
+    }
+
+    public void demanderChangementMJ(String nomPersonnage, String nouveauMjPseudo) {
+        Personnage personnage = personnageRepo.findByNom(nomPersonnage)
+                .orElseThrow(() -> new IllegalArgumentException("Personnage not found"));
+
+        MeneurDeJeu nouveauMj = (MeneurDeJeu) userRepo.findByPseudo(nouveauMjPseudo)
+                .orElseThrow(() -> new IllegalArgumentException("Nouveau MJ not found"));
+
+        personnage.setMjEnAttente(nouveauMj);
+    }
+
+    public void accepterChangementMJ(String nomPersonnage, String mjPseudo) {
+        Personnage personnage = personnageRepo.findByNom(nomPersonnage)
+                .orElseThrow(() -> new IllegalArgumentException("Personnage not found"));
+
+        MeneurDeJeu mj = (MeneurDeJeu) userRepo.findByPseudo(mjPseudo)
+                .orElseThrow(() -> new IllegalArgumentException("MJ not found"));
+
+        if (!mj.equals(personnage.getMjEnAttente())) {
+            throw new IllegalArgumentException("Not the pending MJ");
+        }
+
+        personnage.setMeneurDeJeu(mj);
+        personnage.setMjEnAttente(null);
+    }
+
 }

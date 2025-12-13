@@ -1,6 +1,13 @@
 package com.polytech.model;
 
+import com.polytech.repository.PartieRepository;
+
 public class Personnage {
+    public enum StatutPersonnage {
+        PROPOSE,
+        ACCEPTE
+    }
+
     private String nom;
     private String dateNaissance;
     private String profession;
@@ -9,6 +16,8 @@ public class Personnage {
     private Univers univers;
     private Joueur joueur; // owner
     private MeneurDeJeu meneurDeJeu; // assigned MJ
+    private StatutPersonnage statut = StatutPersonnage.PROPOSE;
+    private MeneurDeJeu mjEnAttente; // for MJ transfer request
 
     public Personnage(String nom, String dateNaissance, String profession, String portrait, Univers univers, Joueur joueur) {
         this.nom = nom;
@@ -82,5 +91,27 @@ public class Personnage {
 
     public void setMeneurDeJeu(MeneurDeJeu meneurDeJeu) {
         this.meneurDeJeu = meneurDeJeu;
+    }
+
+    public StatutPersonnage getStatut() {
+        return statut;
+    }
+
+    public void setStatut(StatutPersonnage statut) {
+        this.statut = statut;
+    }
+
+    public MeneurDeJeu getMjEnAttente() {
+        return mjEnAttente;
+    }
+
+    public void setMjEnAttente(MeneurDeJeu mjEnAttente) {
+        this.mjEnAttente = mjEnAttente;
+    }
+
+    public boolean participeAPartieNonTerminee() {
+        // Check if in any unfinished party
+        return PartieRepository.getInstance().getParties().stream()
+                .anyMatch(p -> !p.isTerminee() && p.getParticipants().contains(this));
     }
 }

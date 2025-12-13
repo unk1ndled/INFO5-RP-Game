@@ -140,7 +140,7 @@ public class PartieTest {
         partieController.ajouterParticipant("Test Party", "Perso1", "mj1");
         partieController.finirPartie("Test Party", "Great adventure!", "mj1");
 
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(IllegalStateException.class, () ->
             partieController.ajouterParticipant("Test Party", "Perso2", "mj1"));
     }
 
@@ -160,7 +160,7 @@ public class PartieTest {
         partieController.ajouterParticipant("Test Party", "Perso1", "mj1");
         partieController.finirPartie("Test Party", "Great adventure!", "mj1");
 
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(IllegalStateException.class, () ->
             partieController.retirerParticipant("Test Party", "Perso1", "mj1"));
     }
 
@@ -210,7 +210,7 @@ public class PartieTest {
         Partie partie = partieController.proposerPartie("Test Party", "Summary", "15/12/2025", "Paris", "Univers1", "mj1");
         partieController.finirPartie("Test Party", "Adventure!", "mj1");
 
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(IllegalStateException.class, () ->
             partieController.supprimerProposition("Test Party", "mj1"));
     }
 

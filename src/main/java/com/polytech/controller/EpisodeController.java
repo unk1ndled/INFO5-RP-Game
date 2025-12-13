@@ -9,11 +9,18 @@ public class EpisodeController {
     private PersonnageRepository personnageRepo = PersonnageRepository.getInstance();
     private PartieRepository partieRepo = PartieRepository.getInstance();
 
-    public Episode creerEpisode(String nomPersonnage, String dateRelative, String contenu) {
+    public Episode creerEpisode(String nomPersonnage, String dateRelative, String contenu, String acteurPseudo) {
         Personnage personnage = personnageRepo.findByNom(nomPersonnage)
                 .orElseThrow(() -> new IllegalArgumentException("Personnage not found"));
+        Utilisateur acteur = UtilisateurRepository.getInstance().findByPseudo(acteurPseudo)
+                .orElseThrow(() -> new IllegalArgumentException("Acteur not found"));
+
+        if (!acteur.equals(personnage.getJoueur()) && !acteur.equals(personnage.getMeneurDeJeu())) {
+            throw new IllegalArgumentException("Unauthorized to create episode");
+        }
+
         Episode episode = new Episode(dateRelative);
-        // Add content as paragraphe, assume public for simplicity
+
         ParagrapheSecret paragraphe = new ParagrapheSecret(contenu, false);
         episode.ajouterParagrapheSecret(paragraphe);
         personnage.getBiographie().ajouterEpisode(episode);
@@ -69,7 +76,7 @@ public class EpisodeController {
         }
 
         ParagrapheSecret para = episode.getParagraphesSecrets().get(paragrapheIndex);
-        para.setSecret(false);
+        para.reveler();
     }
 
     public Episode creerEpisodeDraft(String nomPersonnage, String dateRelative) {
@@ -91,6 +98,27 @@ public class EpisodeController {
         }
         ParagrapheSecret paragraphe = new ParagrapheSecret(contenu, isSecret);
         episode.ajouterParagrapheSecret(paragraphe);
+    }
+
+    public void lierEpisodeAventure(String nomPersonnage, String dateRelative, String titrePartie) {
+        Personnage personnage = personnageRepo.findByNom(nomPersonnage)
+                .orElseThrow(() -> new IllegalArgumentException("Personnage not found"));
+        Episode episode = personnage.getBiographie().getEpisodes().stream()
+                .filter(e -> e.getDateRelative().equals(dateRelative)).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Episode not found"));
+
+        Partie partie = partieRepo.findByTitre(titrePartie)
+                .orElseThrow(() -> new IllegalArgumentException("Partie not found"));
+
+        if (!partie.isTerminee()) {
+            throw new IllegalStateException("Party not finished");
+        }
+
+        if (!partie.aParticipe(personnage)) {
+            throw new IllegalArgumentException("Character did not participate in this adventure");
+        }
+
+        episode.setPartieLiee(partie);
     }
 
 

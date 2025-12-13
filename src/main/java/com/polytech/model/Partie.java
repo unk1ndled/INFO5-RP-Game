@@ -13,6 +13,7 @@ public class Partie {
     private MeneurDeJeu meneurDeJeu;
     private List<Personnage> participants = new ArrayList<>();
     private String resumeEvenements; // added when finished
+    private boolean terminee = false;
 
     public enum Status {
         PROPOSITION, AVENTURE
@@ -40,6 +41,13 @@ public class Partie {
     public void finirPartie(String resumeEvenements) {
         this.resumeEvenements = resumeEvenements;
         this.statut = Status.AVENTURE;
+        this.terminee = true;
+    }
+
+    public void checkModifiable() {
+        if (terminee) {
+            throw new IllegalStateException("Party finished");
+        }
     }
 
     public String getTitre() {
@@ -112,5 +120,17 @@ public class Partie {
 
     public void setResumeEvenements(String resumeEvenements) {
         this.resumeEvenements = resumeEvenements;
+    }
+
+    public boolean isTerminee() {
+        return terminee;
+    }
+
+    public void setTerminee(boolean terminee) {
+        this.terminee = terminee;
+    }
+
+    public boolean aParticipe(Personnage personnage) {
+        return participants.contains(personnage);
     }
 }

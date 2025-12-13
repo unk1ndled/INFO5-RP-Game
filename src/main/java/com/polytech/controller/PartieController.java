@@ -47,6 +47,8 @@ public class PartieController {
         Personnage personnage = personnageRepo.findByNom(nomPersonnage)
                 .orElseThrow(() -> new IllegalArgumentException("Personnage not found"));
 
+        partie.checkModifiable();
+
         if (!partie.getMeneurDeJeu().getPseudo().equals(meneurPseudo)) {
             throw new IllegalArgumentException("Only the MJ can manage participants");
         }
@@ -63,10 +65,6 @@ public class PartieController {
             throw new IllegalArgumentException("Character is already a participant");
         }
 
-        if (partie.getStatut() != Partie.Status.PROPOSITION) {
-            throw new IllegalArgumentException("Cannot modify participants of a finished party");
-        }
-
         partie.ajouterParticipant(personnage);
     }
 
@@ -76,12 +74,10 @@ public class PartieController {
         Personnage personnage = personnageRepo.findByNom(nomPersonnage)
                 .orElseThrow(() -> new IllegalArgumentException("Personnage not found"));
 
+        partie.checkModifiable();
+
         if (!partie.getMeneurDeJeu().getPseudo().equals(meneurPseudo)) {
             throw new IllegalArgumentException("Only the MJ can manage participants");
-        }
-
-        if (partie.getStatut() != Partie.Status.PROPOSITION) {
-            throw new IllegalArgumentException("Cannot modify participants of a finished party");
         }
 
         partie.retirerParticipant(personnage);
@@ -114,12 +110,10 @@ public class PartieController {
         Partie partie = partieRepo.findByTitre(titrePartie)
                 .orElseThrow(() -> new IllegalArgumentException("Partie not found"));
 
+        partie.checkModifiable();
+
         if (!partie.getMeneurDeJeu().getPseudo().equals(meneurPseudo)) {
             throw new IllegalArgumentException("Only the MJ can delete the proposal");
-        }
-
-        if (partie.getStatut() != Partie.Status.PROPOSITION) {
-            throw new IllegalArgumentException("Cannot delete a finished party");
         }
 
         partieRepo.getParties().remove(partie);

@@ -33,7 +33,7 @@ public class App {
 
         // Add an episode
         System.out.println("Ajout d'un épisode...");
-        Episode episode = episodeCtrl.creerEpisode("Capitaine Jack", "An 2", "Le capitaine découvre un trésor.");
+        Episode episode = episodeCtrl.creerEpisode("Capitaine Jack", "An 2", "Le capitaine découvre un trésor.", "Joueur1");
         System.out.println("Épisode créé: statut " + episode.getStatut());
 
         // Validate by player

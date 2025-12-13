@@ -109,4 +109,8 @@ public class Episode {
     public boolean isValidatedByMJ() {
         return isValidatedByMJ;
     }
+
+    public boolean isVisiblePublic() {
+        return statut == Status.VALIDATED;
+    }
 }
