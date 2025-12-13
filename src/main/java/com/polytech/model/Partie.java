@@ -8,6 +8,7 @@ public class Partie {
     private String resumeInitial;
     private String date;
     private String lieu;
+    private Univers univers;
     private Status statut;
     private MeneurDeJeu meneurDeJeu;
     private List<Personnage> participants = new ArrayList<>();
@@ -17,11 +18,12 @@ public class Partie {
         PROPOSITION, AVENTURE
     }
 
-    public Partie(String titre, String resumeInitial, String date, String lieu, MeneurDeJeu meneurDeJeu) {
+    public Partie(String titre, String resumeInitial, String date, String lieu, Univers univers, MeneurDeJeu meneurDeJeu) {
         this.titre = titre;
         this.resumeInitial = resumeInitial;
         this.date = date;
         this.lieu = lieu;
+        this.univers = univers;
         this.statut = Status.PROPOSITION;
         this.meneurDeJeu = meneurDeJeu;
         this.participants = new ArrayList<>();
@@ -70,6 +72,14 @@ public class Partie {
 
     public void setLieu(String lieu) {
         this.lieu = lieu;
+    }
+
+    public Univers getUnivers() {
+        return univers;
+    }
+
+    public void setUnivers(Univers univers) {
+        this.univers = univers;
     }
 
     public Status getStatut() {
