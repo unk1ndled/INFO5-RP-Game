@@ -1,0 +1,33 @@
+@startuml
+actor "Meneur de Jeu" as MJ
+participant "Système" as S
+
+== Création de la proposition de partie ==
+MJ -> S : Créer une proposition de partie
+S -> MJ : Demander informations\n(titre, univers, date, ...)
+MJ -> S : Fournir informations
+S -> MJ : Proposition créée\n(status = proposition)
+
+== Préparation de la partie ==
+MJ -> S : Ajouter un personnage à la partie
+S -> MJ : Personnage ajouté
+
+MJ -> S : Retirer un personnage de la partie
+S -> MJ : Personnage retiré
+
+MJ -> S : Modifier les informations de la proposition
+S -> MJ : Informations mises à jour
+
+alt Suppression avant la partie
+    MJ -> S : Supprimer la proposition
+    S -> MJ : Proposition supprimée
+end
+
+== Finalisation ==
+MJ -> S : Saisir le résumé de l'aventure
+S -> MJ : Résumé enregistré
+
+MJ -> S : Annoncer la fin de la partie
+S -> MJ : Partie clôturée\n(status = aventure,\ninfos archivées)
+@enduml
+

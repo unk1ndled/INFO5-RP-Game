@@ -1,0 +1,27 @@
+@startuml
+actor Joueur as J
+actor "Meneur de Jeu" as MJ
+participant "Système" as S
+
+== Création d'un personnage ==
+J -> S : Demander création personnage
+S -> J : Demander informations du personnage
+J -> S : Fournir infos\n(nom, date, profession, biographie)
+S -> J : Personnage créé\n(status = proposé, attente validation MJ)
+
+== Validation par le MJ ==
+MJ -> S : Consulter personnages proposés
+S -> MJ : Liste des personnages proposés
+
+MJ -> S : Consulter biographie privée
+S -> MJ : Biographie privée du personnage
+
+alt Accepté
+    MJ -> S : Accepter personnage
+    S -> MJ : Confirmation\n(status = validé)
+else Refusé
+    MJ -> S : Refuser personnage
+    S -> MJ : Confirmation\n(personnage refusé)
+end
+@enduml
+

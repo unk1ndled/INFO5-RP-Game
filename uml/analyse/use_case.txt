@@ -1,0 +1,39 @@
+@startuml
+left to right direction
+skinparam actorStyle awesome
+
+
+actor Utilisateur as U
+actor Joueur as J
+actor "Meneur de Jeu" as MJ
+actor Visiteur as V
+
+
+' Relations d'héritage (spécialisation)
+U <|-- J
+J <|-- MJ
+
+' --- Cas d'utilisation ---
+
+V --> (Consulter la biographie publique du personnage)
+U --> (Consulter la biographie publique du personnage)
+
+J --> (Créer un personnage)
+J --> (Choisir un personnage ou plusieurs)
+J --> (Saisir une nouvelle épisode)
+J --> (Modifier l'épisode)
+J --> (Supprimer l'épisode)
+J --> (Valider l'épisode)
+J --> (Ceder ses droits à un autre joueur)
+J --> (proposer d’organiser une partie)
+
+MJ --> (Modifier les informations d'une proposition de partie)
+MJ --> (Supprimer une proposition de partie)
+MJ --> (Ajouter un personnage à une partie)
+MJ --> (Retirer un personnage d'une partie)
+MJ --> (Accepter la création d'un personnage)
+MJ --> (Refuser le création d'un personnage)
+MJ --> (Saisir le résumé des événements d'une aventure)
+MJ --> (anoncer la fin la partie)
+MJ --> (Consulter biographie privée du personnage)
+@enduml
