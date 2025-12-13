@@ -6,17 +6,19 @@ participant "Système" as S
 MJ -> S : Créer une proposition de partie
 S -> MJ : Demander informations\n(titre, univers, date, ...)
 MJ -> S : Fournir informations
-S -> MJ : Proposition créée\n(status = proposition)
+S -> MJ : Proposition créée\n(status = PROPOSITION)
 
 == Préparation de la partie ==
 MJ -> S : Ajouter un personnage à la partie
 S -> MJ : Personnage ajouté
 
-MJ -> S : Retirer un personnage de la partie
-S -> MJ : Personnage retiré
-
-MJ -> S : Modifier les informations de la proposition
-S -> MJ : Informations mises à jour
+alt Gestion de la proposition 
+    MJ -> S : Retirer un personnage de la partie
+    S -> MJ : Personnage retiré
+else
+    MJ -> S : Modifier les informations de la proposition
+    S -> MJ : Informations mises à jour
+end
 
 alt Suppression avant la partie
     MJ -> S : Supprimer la proposition
@@ -28,6 +30,5 @@ MJ -> S : Saisir le résumé de l'aventure
 S -> MJ : Résumé enregistré
 
 MJ -> S : Annoncer la fin de la partie
-S -> MJ : Partie clôturée\n(status = aventure,\ninfos archivées)
+S -> MJ : Partie clôturée\n(status = AVENTURE,\ninfos archivées)
 @enduml
-
