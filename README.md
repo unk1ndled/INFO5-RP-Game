@@ -2,28 +2,49 @@
 
 ## Description du Projet
 
-Ce projet est une application Java pour gérer les personnages et aventures dans un jeu de rôle. L'application permet aux joueurs de créer des personnages, aux maîtres de jeu (MJ) de valider les créations, et de gérer les biographies avec du contenu public et secret.
+Ce projet est une application Java complète pour gérer les personnages, aventures et parties dans un univers de jeu de rôle. L'application permet aux joueurs de créer des personnages liés à des univers spécifiques, aux maîtres de jeu (MJ) de valider les créations et gérer les aventures, et de gérer des biographies complexes avec du contenu public et secret. Le système inclut la gestion des parties, des transferts de personnages, et des liaisons entre épisodes et aventures.
 
 ## Fonctionnalités Principales
 
+### Gestion des Univers
+- Création d'univers (ex: Pirates, Fantasy, Star Wars)
+- Chaque personnage et aventure appartient à un univers spécifique
+
 ### Pour les Joueurs
-- Créer de nouveaux personnages avec nom, profession et date de naissance
-- Écrire des épisodes dans la biographie de leurs personnages
+- Créer de nouveaux personnages avec nom, profession, date de naissance et univers
+- Proposer des personnages aux MJ pour validation
+- Écrire des épisodes dans la biographie de leurs personnages (publics ou secrets)
 - Valider leurs propres épisodes
+- Transférer leurs personnages à d'autres joueurs
+- Participer à des aventures organisées par les MJ
 
 ### Pour les Maîtres de Jeu (MJ)
-- Valider ou refuser les personnages créés par les joueurs
+- Valider ou refuser les personnages proposés par les joueurs
+- Accéder aux biographies privées avant validation
 - Valider les épisodes écrits par les joueurs
+- Organiser des parties/aventure dans un univers
+- Ajouter/retirer des personnages participants
+- Finaliser les aventures avec un résumé
+- Demander ou accepter des transferts de MJ pour des personnages
 - Accéder à tout le contenu (public et secret) des biographies
 
 ### Pour les Visiteurs
 - Consulter les biographies publiques des personnages
 - Accès limité : les contenus secrets ne sont pas visibles
+- Voir les propositions de parties
 
 ### Gestion des Permissions
 - **Contenu Public** : Visible par tout le monde
 - **Contenu Secret** : Visible seulement par le propriétaire du personnage et le MJ
 - **Validation Double** : Les épisodes nécessitent la validation du joueur ET du MJ
+- **Immutabilité** : Épisodes validés et aventures terminées ne peuvent plus être modifiés
+- **Transferts Bloqués** : Impossible de transférer un personnage participant à une partie non terminée
+
+### Gestion des Parties et Aventures
+- Proposition de parties par n'importe quel utilisateur (devient MJ)
+- Ajout de personnages validés du même univers
+- Finalisation des parties pour créer des aventures
+- Liaison manuelle d'épisodes aux aventures
 
 ## Technologies Utilisées
 
@@ -69,18 +90,27 @@ mvn test
 
 ## Utilisation de l'Application
 
+### Version Console (App.java)
+La version console démontre un scénario basique :
+- Création d'univers et utilisateurs
+- Création et validation de personnages
+- Création et validation d'épisodes
+
+### Version Graphique (ApplicationGUI)
+**Note** : L'interface graphique peut ne pas refléter toutes les nouvelles fonctionnalités avancées (parties, transferts). Utilisez la version console pour tester complètement.
+
 ### 1. Sélection d'Utilisateur
 - Commencez par sélectionner un utilisateur dans l'onglet "Sélection Utilisateur"
-- **Visiteur** : Accès en lecture seule
-- **Alice** : Joueuse (peut créer des personnages)
-- **Abdel Raouf** : Joueur (peut créer des personnages)
-- **Bob** : Maître de Jeu (peut valider les personnages)
+- **Visiteur** : Accès en lecture seule aux biographies publiques
+- **Joueurs** : Peuvent créer des personnages et gérer leurs épisodes
+- **MJ** : Peuvent valider personnages et épisodes, organiser parties
 
 ### 2. Création de Personnages
 - Allez dans l'onglet "Création Personnage"
-- Remplissez le formulaire (nom, profession, date de naissance)
+- Remplissez le formulaire (nom, profession, date de naissance, univers)
 - Cliquez sur "Proposer Personnage"
-- Le MJ devra ensuite valider le personnage
+- Le personnage est créé avec statut PROPOSE
+- Le MJ devra ensuite valider le personnage (peut lire la bio privée)
 
 ### 3. Gestion des Épisodes
 - Dans l'onglet "Gestion Épisodes"
@@ -94,10 +124,23 @@ mvn test
   - Utilisez "Retirer le Paragraphe Sélectionné" pour supprimer des paragraphes
 - **Sauvegarde** : Cliquez "Sauvegarder Épisode comme Brouillon" pour enregistrer
 - **Validation** : Cliquez "Valider l'Épisode" (nécessite validation joueur + MJ)
+- **Liaison à aventure** : Après validation, peut lier à une aventure terminée
 - **Affichage chronologique** : Les épisodes sont affichés triés par date
 - **Permissions** : Le contenu secret n'est visible que par le propriétaire et le MJ
 
-### 4. Consultation des Biographies
+### 4. Gestion des Parties (Console uniquement)
+- Utilisez PartieController pour :
+  - Proposer une partie dans un univers
+  - Ajouter des personnages validés du même univers
+  - Finaliser la partie pour créer une aventure
+  - Les aventures terminées peuvent être liées aux épisodes
+
+### 5. Transferts (Console uniquement)
+- Transfert de joueur : Changement de propriétaire du personnage
+- Transfert de MJ : Demande d'un nouveau MJ avec acceptation requise
+- Bloqué si le personnage participe à une partie non terminée
+
+### 6. Consultation des Biographies
 - Onglet "Biographie"
 - Sélectionnez un personnage
 - **Affichage chronologique des épisodes** : Les épisodes validés sont affichés triés par date
@@ -108,7 +151,7 @@ mvn test
 - **Révélation de secrets** (panneau de droite) :
   - Fonction réservée au propriétaire du personnage
   - Sélectionnez un secret et cliquez "Révéler le Secret Sélectionné"
-  - **Action irréversible** avec confirmation requise
+  - **Action irréversible** (confirmation simulée en console)
 
 ## Architecture MVC
 
@@ -120,10 +163,15 @@ L'application suit le pattern **Modèle-Vue-Contrôleur** :
 
 ## Tests
 
-L'application inclut des tests unitaires pour vérifier :
+L'application inclut des tests unitaires complets pour vérifier :
 - La logique de validation double des épisodes
-- Les permissions d'accès aux biographies
-- L'immutabilité des épisodes validés
+- Les permissions d'accès aux biographies (public/privé)
+- L'immutabilité des épisodes validés et aventures terminées
+- La gestion des personnages (PROPOSE/ACCEPTE)
+- La gestion des parties et participants
+- Les transferts de personnages et MJ
+- Les liaisons épisode-aventure
+- L'irréversibilité de la révélation des secrets
 
 
 
