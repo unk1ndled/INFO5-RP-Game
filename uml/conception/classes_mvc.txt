@@ -1,0 +1,227 @@
+@startuml Diagramme de classes logicielles (MVC)
+!define MVC
+
+package "Model" #LightBlue {
+    class Utilisateur {
+        - pseudo: String
+        - email: String
+        + getPseudo(): String
+        + equals(Object): boolean
+    }
+
+    class Joueur {
+    }
+
+    class MeneurDeJeu {
+    }
+
+    class Univers {
+        - nom: String
+    }
+
+    class Personnage {
+        - nom: String
+        - biographie: Biographie
+        - univers: Univers
+        - joueur: Joueur
+        - meneurDeJeu: MeneurDeJeu
+        - statut: StatutPersonnage
+    }
+
+    enum StatutPersonnage {
+        PROPOSE
+        ACCEPTE
+    }
+
+    class Biographie {
+        - episodes: List<Episode>
+        + getEpisodesPublics(): List<Episode>
+        + getVisibleParagraphs(...): List<ParagrapheSecret>
+    }
+
+    class Episode {
+        - dateRelative: String
+        - statut: Status
+        - paragraphesSecrets: List<ParagrapheSecret>
+        + validate(...)
+        + isVisiblePublic(): boolean
+    }
+
+    enum Status {
+        DRAFT
+        VALIDATED
+    }
+
+    class ParagrapheSecret {
+        - texte: String
+        - isSecret: boolean
+        + reveler()
+    }
+
+    class Partie {
+        - titre: String
+        - univers: Univers
+        - meneurDeJeu: MeneurDeJeu
+        - participants: List<Personnage>
+        - terminee: boolean
+        + ajouterParticipant(Personnage)
+        + finirPartie(String)
+        + checkModifiable()
+    }
+
+    enum Status {
+        PROPOSITION
+        AVENTURE
+    }
+}
+
+package "Controller" #LightGreen {
+    class PersonnageController {
+        - personnageRepo: PersonnageRepository
+        - userRepo: UtilisateurRepository
+        + creerPersonnage(...)
+        + accepterPersonnage(...)
+        + refuserPersonnage(...)
+        + getBiographiePrivee(...)
+        + transfererJoueur(...)
+        + demanderChangementMJ(...)
+        + accepterChangementMJ(...)
+    }
+
+    class EpisodeController {
+        - personnageRepo: PersonnageRepository
+        - partieRepo: PartieRepository
+        + creerEpisode(...)
+        + validerEpisode(...)
+        + supprimerEpisode(...)
+        + revelerSecret(...)
+        + lierEpisodeAventure(...)
+    }
+
+    class PartieController {
+        - partieRepo: PartieRepository
+        - personnageRepo: PersonnageRepository
+        - universRepo: UniversRepository
+        - userRepo: UtilisateurRepository
+        + proposerPartie(...)
+        + ajouterParticipant(...)
+        + retirerParticipant(...)
+        + finirPartie(...)
+        + supprimerProposition(...)
+        + getPersonnagesDisponibles(...)
+    }
+}
+
+package "View" #LightYellow {
+    class ApplicationGUI {
+        - userSelectionPanel: UserSelectionPanel
+        - creationPersonnagePanel: CreationPersonnagePanel
+        - episodeManagementPanel: EpisodeManagementPanel
+        - biographiePanel: BiographiePanel
+    }
+
+    class UserSelectionPanel {
+        + selectionnerUtilisateur(String)
+    }
+
+    class CreationPersonnagePanel {
+        + proposerPersonnage(...)
+        + validerPersonnage(...)
+        + refuserPersonnage(...)
+    }
+
+    class EpisodeManagementPanel {
+        + creerEpisode(...)
+        + ajouterParagraphe(...)
+        + validerEpisode(...)
+        + supprimerEpisode(...)
+        + lierEpisodeAventure(...)
+    }
+
+    class BiographiePanel {
+        + afficherBiographie(...)
+        + revelerSecret(...)
+    }
+}
+
+package "Repository" #LightGray {
+    class UtilisateurRepository {
+        - utilisateurs: List<Utilisateur>
+        + ajouterUtilisateur(Utilisateur)
+        + findByPseudo(String): Optional<Utilisateur>
+        + getUtilisateurs(): List<Utilisateur>
+    }
+
+    class PersonnageRepository {
+        - personnages: List<Personnage>
+        + ajouterPersonnage(Personnage)
+        + findByNom(String): Optional<Personnage>
+        + getPersonnages(): List<Personnage>
+    }
+
+    class UniversRepository {
+        - univers: List<Univers>
+        + ajouterUnivers(Univers)
+        + findByNom(String): Optional<Univers>
+        + getUnivers(): List<Univers>
+    }
+
+    class PartieRepository {
+        - parties: List<Partie>
+        + ajouterPartie(Partie)
+        + findByTitre(String): Optional<Partie>
+        + findByMeneurDeJeu(MeneurDeJeu): List<Partie>
+        + getParties(): List<Partie>
+    }
+}
+
+' Relations d'héritage
+Utilisateur <|-- Joueur
+Utilisateur <|-- MeneurDeJeu
+
+' Relations de composition/association
+Personnage *-- Biographie
+Personnage --> Univers
+Personnage --> Joueur
+Personnage --> MeneurDeJeu
+Personnage --> StatutPersonnage
+
+Biographie *-- Episode
+Episode *-- ParagrapheSecret
+Episode --> Partie
+
+Partie --> Univers
+Partie --> MeneurDeJeu
+Partie *-- Personnage
+Partie --> Status
+
+' Relations MVC
+PersonnageController --> PersonnageRepository
+PersonnageController --> UtilisateurRepository
+PersonnageController --> Personnage
+
+EpisodeController --> PersonnageRepository
+EpisodeController --> PartieRepository
+EpisodeController --> Episode
+EpisodeController --> Personnage
+
+PartieController --> PartieRepository
+PartieController --> PersonnageRepository
+PartieController --> UniversRepository
+PartieController --> UtilisateurRepository
+PartieController --> Partie
+
+ApplicationGUI *-- UserSelectionPanel
+ApplicationGUI *-- CreationPersonnagePanel
+ApplicationGUI *-- EpisodeManagementPanel
+ApplicationGUI *-- BiographiePanel
+
+' Relations entre couches
+PersonnageController --> CreationPersonnagePanel
+PersonnageController --> BiographiePanel
+
+EpisodeController --> EpisodeManagementPanel
+EpisodeController --> BiographiePanel
+
+PartieController --> EpisodeManagementPanel
+@enduml
