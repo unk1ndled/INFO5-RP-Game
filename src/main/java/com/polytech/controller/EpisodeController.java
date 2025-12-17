@@ -5,6 +5,8 @@ import com.polytech.repository.PersonnageRepository;
 import com.polytech.repository.PartieRepository;
 import com.polytech.repository.UtilisateurRepository;
 
+import java.util.List;
+
 public class EpisodeController {
     private PersonnageRepository personnageRepo = PersonnageRepository.getInstance();
     private PartieRepository partieRepo = PartieRepository.getInstance();
@@ -27,7 +29,7 @@ public class EpisodeController {
         return episode;
     }
 
-    public void modifierEpisode(String nomPersonnage, String dateRelative, String nouveauContenu) {
+    public void modifierEpisode(String nomPersonnage, String dateRelative, List<ParagrapheSecret> nouveauxParagraphes) {
         Personnage personnage = personnageRepo.findByNom(nomPersonnage)
                 .orElseThrow(() -> new IllegalArgumentException("Personnage not found"));
         Episode episode = personnage.getBiographie().getEpisodes().stream()
@@ -36,7 +38,11 @@ public class EpisodeController {
         if (episode.getStatut() != Episode.Status.DRAFT) {
             throw new IllegalStateException("Cannot modify non-draft episode");
         }
-        // Modify content, but since simple, perhaps replace
+
+        episode.getParagraphesSecrets().clear();
+        for (ParagrapheSecret paragraphe : nouveauxParagraphes) {
+            episode.ajouterParagrapheSecret(paragraphe);
+        }
     }
 
     public void validerEpisode(String nomPersonnage, String dateRelative, String acteurPseudo) {

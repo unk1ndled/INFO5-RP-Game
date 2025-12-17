@@ -7,7 +7,7 @@ public class Episode {
     private String dateRelative;
     private Status statut;
     private List<ParagrapheSecret> paragraphesSecrets = new ArrayList<>();
-    private Partie partieLiee; // optional
+    private Partie partieLiee; 
 
     // Double validation flags
     private boolean isValidatedByPlayer;
@@ -48,7 +48,6 @@ public class Episode {
             throw new IllegalArgumentException("Actor must be either the owner or the MJ");
         }
 
-        // Transition to VALIDATED based on validation requirements
         boolean ownerIsMJ = owner.equals(mj);
         if (ownerIsMJ) {
             // If owner is MJ, only one validation is needed
