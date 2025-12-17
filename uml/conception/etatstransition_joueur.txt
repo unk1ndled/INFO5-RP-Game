@@ -1,0 +1,28 @@
+@startuml
+[*] --> PROPOSITION
+
+state PROPOSITION
+
+note right of PROPOSITION
+  Partie en cours de préparation
+  - modifiable
+  - participants ajustables
+  - supprimable
+end note
+
+PROPOSITION --> PROPOSITION : modifierInfos()\n ajouterParticipant()\n retirerParticipant()
+
+PROPOSITION --> AVENTURE : finirPartie()\n(résumé saisi)
+
+PROPOSITION --> [*] : supprimerProposition()
+
+state AVENTURE
+
+note right of AVENTURE
+  Partie terminée
+  - non modifiable
+  - non supprimable
+end note
+
+AVENTURE --> [*]
+@enduml
