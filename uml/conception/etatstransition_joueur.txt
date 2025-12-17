@@ -1,28 +1,39 @@
 @startuml
-[*] --> PROPOSITION
+[*] --> PROPOSE : creerPersonnage()
 
-state PROPOSITION
-
-note right of PROPOSITION
-  Partie en cours de préparation
-  - modifiable
-  - participants ajustables
-  - supprimable
+state PROPOSE
+note right of PROPOSE
+  Personnage créé par un joueur
+  Statut = PROPOSE
+  En attente de validation par un MJ
 end note
 
-PROPOSITION --> PROPOSITION : modifierInfos()\n ajouterParticipant()\n retirerParticipant()
+PROPOSE --> ACCEPTE : accepterPersonnage()
+PROPOSE --> [*] : refuserPersonnage()
 
-PROPOSITION --> AVENTURE : finirPartie()\n(résumé saisi)
-
-PROPOSITION --> [*] : supprimerProposition()
-
-state AVENTURE
-
-note right of AVENTURE
-  Partie terminée
-  - non modifiable
-  - non supprimable
+state ACCEPTE
+note right of ACCEPTE
+  Personnage accepté par un MJ
+  Statut = ACCEPTE
+  Jouable et modifiable
 end note
 
-AVENTURE --> [*]
+ACCEPTE --> ACCEPTE : transfererJoueur() [aucune partie non terminée]
+
+ACCEPTE --> MJ_EN_ATTENTE : demanderChangementMJ()
+
+state MJ_EN_ATTENTE
+note right of MJ_EN_ATTENTE
+  Nouveau MJ proposé
+  En attente d’acceptation
+end note
+
+MJ_EN_ATTENTE --> ACCEPTE : accepterChangementMJ()
+
+note bottom
+Règle métier :
+Le transfert de joueur ou de MJ
+est interdit si le personnage
+participe à une partie non terminée
+end note
 @enduml
