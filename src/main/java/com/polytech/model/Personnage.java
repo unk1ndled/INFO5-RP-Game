@@ -11,13 +11,13 @@ public class Personnage {
     private String nom;
     private String dateNaissance;
     private String profession;
-    private String portrait; // perhaps URL or path
+    private String portrait; 
     private Biographie biographie;
     private Univers univers;
-    private Joueur joueur; // owner
-    private MeneurDeJeu meneurDeJeu; // assigned MJ
+    private Joueur joueur; 
+    private MeneurDeJeu meneurDeJeu;
     private StatutPersonnage statut = StatutPersonnage.PROPOSE;
-    private MeneurDeJeu mjEnAttente; // for MJ transfer request
+    private MeneurDeJeu mjEnAttente; 
 
     public Personnage(String nom, String dateNaissance, String profession, String portrait, Univers univers, Joueur joueur) {
         this.nom = nom;
@@ -110,7 +110,6 @@ public class Personnage {
     }
 
     public boolean participeAPartieNonTerminee() {
-        // Check if in any unfinished party
         return PartieRepository.getInstance().getParties().stream()
                 .anyMatch(p -> !p.isTerminee() && p.getParticipants().contains(this));
     }

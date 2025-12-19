@@ -24,7 +24,6 @@ public class UserSelectionPanel extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
-        // Title
         JLabel titleLabel = new JLabel("Sélection de l'Utilisateur Actif");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
         gbc.gridx = 0;
@@ -32,7 +31,6 @@ public class UserSelectionPanel extends JPanel {
         gbc.gridwidth = 4;
         add(titleLabel, gbc);
 
-        // User buttons
         btnVisitor = new JButton("Visiteur (Lecteur seul)");
         btnVisitor.addActionListener(new UserSelectionListener());
 
@@ -58,7 +56,6 @@ public class UserSelectionPanel extends JPanel {
         gbc.gridx = 3;
         add(btnBob, gbc);
 
-        // Instructions
         JLabel instructions = new JLabel("<html><center>Sélectionnez un utilisateur pour tester les permissions:<br/>" +
                 "• Visiteur: Ne voit que le contenu public<br/>" +
                 "• Alice/Abdel Raouf: Peuvent créer et valider des épisodes<br/>" +

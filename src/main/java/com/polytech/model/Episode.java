@@ -9,7 +9,6 @@ public class Episode {
     private List<ParagrapheSecret> paragraphesSecrets = new ArrayList<>();
     private Partie partieLiee; 
 
-    // Double validation flags
     private boolean isValidatedByPlayer;
     private boolean isValidatedByMJ;
 
@@ -29,7 +28,6 @@ public class Episode {
         paragraphesSecrets.add(paragraphe);
     }
 
-    // Business logic: validate method
     public void validate(Utilisateur actor, Joueur owner, MeneurDeJeu mj) {
         if (statut == Status.VALIDATED) {
             throw new IllegalStateException("Cannot validate an already validated episode");
@@ -50,19 +48,16 @@ public class Episode {
 
         boolean ownerIsMJ = owner.equals(mj);
         if (ownerIsMJ) {
-            // If owner is MJ, only one validation is needed
             if (isValidatedByPlayer || isValidatedByMJ) {
                 statut = Status.VALIDATED;
             }
         } else {
-            // If owner is not MJ, both validations are needed
             if (isValidatedByPlayer && isValidatedByMJ) {
                 statut = Status.VALIDATED;
             }
         }
     }
 
-    // Immutability: prevent modifications if validated
     private void checkImmutability() {
         if (statut == Status.VALIDATED) {
             throw new IllegalStateException("Cannot modify a validated episode");
@@ -100,7 +95,6 @@ public class Episode {
         this.partieLiee = partieLiee;
     }
 
-    // Getters for validation flags (for testing)
     public boolean isValidatedByPlayer() {
         return isValidatedByPlayer;
     }

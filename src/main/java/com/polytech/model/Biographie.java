@@ -30,27 +30,22 @@ public class Biographie {
     }
 
     public List<Episode> getEpisodesPrives() {
-        return getEpisodes(); // Private view sees all, sorted
+        return getEpisodes(); 
     }
 
     public void setEpisodes(List<Episode> episodes) {
         this.episodes = episodes;
     }
 
-    // Visibility access control method
     public List<ParagrapheSecret> getVisibleParagraphs(Utilisateur viewer, Joueur owner, MeneurDeJeu mj) {
-        // Collect all paragraphs from all episodes
         List<ParagrapheSecret> allParagraphs = new ArrayList<>();
         for (Episode episode : episodes) {
             allParagraphs.addAll(episode.getParagraphesSecrets());
         }
 
-        // Filter based on viewer permissions
         if (viewer.equals(owner) || viewer.equals(mj)) {
-            // Owner or MJ can see all paragraphs
             return allParagraphs;
         } else {
-            // Visitor can only see non-secret paragraphs
             return allParagraphs.stream()
                     .filter(p -> !p.isSecret())
                     .collect(Collectors.toList());

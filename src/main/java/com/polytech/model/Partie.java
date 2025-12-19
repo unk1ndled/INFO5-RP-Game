@@ -12,7 +12,7 @@ public class Partie {
     private Status statut;
     private MeneurDeJeu meneurDeJeu;
     private List<Personnage> participants = new ArrayList<>();
-    private String resumeEvenements; // added when finished
+    private String resumeEvenements; 
     private boolean terminee = false;
 
     public enum Status {

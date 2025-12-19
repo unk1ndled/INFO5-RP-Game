@@ -13,7 +13,6 @@ public class ApplicationGUI extends JFrame {
     private PersonnageController personnageCtrl;
     private EpisodeController episodeCtrl;
 
-    // Panels
     private UserSelectionPanel userPanel;
     private CreationPersonnagePanel creationPanel;
     private EpisodeManagementPanel episodePanel;
@@ -22,7 +21,7 @@ public class ApplicationGUI extends JFrame {
     public ApplicationGUI() {
         initializeControllers();
         initializeGUI();
-        setDefaultUser(); // Start with visitor
+        setDefaultUser(); 
     }
 
     private void initializeControllers() {
@@ -35,13 +34,11 @@ public class ApplicationGUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // Create panels
         userPanel = new UserSelectionPanel(this);
         creationPanel = new CreationPersonnagePanel(this);
         episodePanel = new EpisodeManagementPanel(this);
         biographiePanel = new BiographiePanel(this);
 
-        // Tabbed pane for different views
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Sélection Utilisateur", userPanel);
         tabbedPane.addTab("Création Personnage", creationPanel);
@@ -50,7 +47,6 @@ public class ApplicationGUI extends JFrame {
 
         add(tabbedPane, BorderLayout.CENTER);
 
-        // Status bar
         JPanel statusPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         statusPanel.setBorder(BorderFactory.createEtchedBorder());
         add(statusPanel, BorderLayout.SOUTH);
@@ -62,10 +58,8 @@ public class ApplicationGUI extends JFrame {
     }
 
     private void setDefaultUser() {
-        // Initialize default data
         DataInitializer.initializeDefaultData();
 
-        // Start as visitor
         Utilisateur visitor = UtilisateurRepository.getInstance().findByPseudo("Visiteur").orElse(null);
         if (visitor != null) {
             setCurrentUser(visitor);
@@ -79,7 +73,6 @@ public class ApplicationGUI extends JFrame {
     }
 
     private void updateStatusBar() {
-        // Update status bar with current user
         JPanel statusPanel = (JPanel) getContentPane().getComponent(1);
         statusPanel.removeAll();
 

@@ -11,15 +11,12 @@ import java.util.List;
 public class BiographiePanel extends JPanel {
     private ApplicationGUI mainApp;
 
-    // Character selection
     private JComboBox<String> cmbPersonnages;
     private JButton btnRefresh;
 
-    // Biography display
     private JEditorPane txtBiographie;
     private JScrollPane scrollPane;
 
-    // Secret revelation
     private JButton btnRevelerSecret;
     private JList<String> lstSecrets;
 
@@ -32,7 +29,6 @@ public class BiographiePanel extends JPanel {
     private void initializeComponents() {
         setLayout(new BorderLayout());
 
-        // Top panel - Character selection
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topPanel.add(new JLabel("Sélectionner un Personnage:"));
         cmbPersonnages = new JComboBox<>();
@@ -45,10 +41,8 @@ public class BiographiePanel extends JPanel {
 
         add(topPanel, BorderLayout.NORTH);
 
-        // Center panel - Split between biography display and secret revelation
         JSplitPane centerSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
-        // Biography display (left side)
         txtBiographie = new JEditorPane();
         txtBiographie.setEditable(false);
         txtBiographie.setContentType("text/html");
@@ -59,14 +53,12 @@ public class BiographiePanel extends JPanel {
         scrollPane.setBorder(BorderFactory.createTitledBorder("Biographie"));
         centerSplit.setLeftComponent(scrollPane);
 
-        // Secret revelation panel (right side)
         JPanel revelationPanel = createRevelationPanel();
         centerSplit.setRightComponent(revelationPanel);
         centerSplit.setDividerLocation(600);
 
         add(centerSplit, BorderLayout.CENTER);
 
-        // Bottom panel - Instructions
         JPanel bottomPanel = new JPanel();
         JLabel instructions = new JLabel("<html><center>" +
                 "Test des permissions d'accès:<br/>" +
@@ -110,7 +102,6 @@ public class BiographiePanel extends JPanel {
             return;
         }
 
-        // Check if character is validated
         if (personnage.getMeneurDeJeu() == null) {
             txtBiographie.setText("Ce personnage n'a pas encore été validé par un MJ.");
             updateRevelationPanel(null, null);
@@ -128,7 +119,6 @@ public class BiographiePanel extends JPanel {
         biographyText.append("Propriétaire: ").append(personnage.getJoueur().getPseudo()).append("\n");
         biographyText.append("MJ Assigné: ").append(personnage.getMeneurDeJeu().getPseudo()).append("\n\n");
 
-        // Sort episodes chronologically and display them grouped by episode
         List<Episode> episodes = personnage.getBiographie().getEpisodes()
                 .stream()
                 .filter(ep -> ep.getStatut() == Episode.Status.VALIDATED) // Only validated episodes in biography
@@ -150,10 +140,8 @@ public class BiographiePanel extends JPanel {
                         currentUser.equals(personnage.getMeneurDeJeu())) {
 
                         if (para.isSecret()) {
-                            // Secret content - only visible to owner/MJ
                             biographyText.append("<font color='blue'>").append(para.getTexte()).append(" [SECRET]</font>\n\n");
                         } else {
-                            // Public content
                             biographyText.append("<font color='black'>").append(para.getTexte()).append("</font>\n\n");
                         }
                         hasVisibleContent = true;
@@ -168,12 +156,10 @@ public class BiographiePanel extends JPanel {
             }
         }
 
-        // Set the text with HTML formatting
         txtBiographie.setContentType("text/html");
         txtBiographie.setText("<html><body style='font-family: Arial;'>" +
                 biographyText.toString().replace("\n", "<br/>") + "</body></html>");
 
-        // Update secret revelation panel
         updateRevelationPanel(personnage, currentUser);
     }
 
@@ -182,19 +168,16 @@ public class BiographiePanel extends JPanel {
         panel.setBorder(BorderFactory.createTitledBorder("Révélation de Secrets"));
         panel.setPreferredSize(new Dimension(300, 400));
 
-        // List of secret paragraphs
         lstSecrets = new JList<>();
         lstSecrets.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane listScroll = new JScrollPane(lstSecrets);
         panel.add(listScroll, BorderLayout.CENTER);
 
-        // Reveal button
         btnRevelerSecret = new JButton("Révéler le Secret Sélectionné");
         btnRevelerSecret.addActionListener(new RevelationListener());
         btnRevelerSecret.setEnabled(false); // Initially disabled
         panel.add(btnRevelerSecret, BorderLayout.SOUTH);
 
-        // Instructions
         JLabel instructionLabel = new JLabel("<html><center>Sélectionnez un paragraphe secret<br/>" +
                 "et cliquez pour le révéler.<br/>" +
                 "Cette action est IRRÉVERSIBLE!</center></html>");
@@ -211,7 +194,6 @@ public class BiographiePanel extends JPanel {
             return;
         }
 
-        // Only character owner can reveal secrets
         boolean canReveal = currentUser.equals(personnage.getJoueur());
 
         if (!canReveal) {
@@ -220,7 +202,6 @@ public class BiographiePanel extends JPanel {
             return;
         }
 
-        // Find secret paragraphs that are still secret
         java.util.List<String> secretItems = new java.util.ArrayList<>();
         for (Episode episode : personnage.getBiographie().getEpisodes()) {
             for (int i = 0; i < episode.getParagraphesSecrets().size(); i++) {
@@ -251,7 +232,6 @@ public class BiographiePanel extends JPanel {
                 return;
             }
 
-            // Confirmation dialog
             int result = JOptionPane.showConfirmDialog(mainApp,
                 "Êtes-vous sûr de vouloir révéler ce secret?\n\n" +
                 "Cette action est IRRÉVERSIBLE et rendra le contenu visible à tous.",
@@ -263,14 +243,12 @@ public class BiographiePanel extends JPanel {
                 return;
             }
 
-            // Find and reveal the secret using controller
             String selected = (String) cmbPersonnages.getSelectedItem();
             if (selected != null) {
                 String nomPersonnage = selected.split(" \\(")[0];
                 Personnage personnage = mainApp.getPersonnageController().findByNom(nomPersonnage);
 
                 if (personnage != null) {
-                    // Find the secret paragraph index globally
                     int secretCount = 0;
                     boolean found = false;
                     for (Episode episode : personnage.getBiographie().getEpisodes()) {
@@ -278,7 +256,6 @@ public class BiographiePanel extends JPanel {
                             ParagrapheSecret para = episode.getParagraphesSecrets().get(i);
                             if (para.isSecret()) {
                                 if (secretCount == selectedIndex) {
-                                    // Use controller to reveal secret
                                     mainApp.getEpisodeController().revelerSecret(
                                         nomPersonnage, episode.getDateRelative(), i);
                                     found = true;
@@ -296,7 +273,6 @@ public class BiographiePanel extends JPanel {
                             "Révélation réussie",
                             JOptionPane.INFORMATION_MESSAGE);
 
-                        // Refresh the display
                         displayBiographie();
                     }
                 }

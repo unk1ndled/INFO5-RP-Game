@@ -97,7 +97,6 @@ public class PartieController {
 
         partie.finirPartie(resumeEvenements);
 
-        // Add to participant biographies
         for (Personnage participant : partie.getParticipants()) {
             Episode episodeAventure = new Episode(partie.getDate());
             ParagrapheSecret paraAventure = new ParagrapheSecret(resumeEvenements, false);

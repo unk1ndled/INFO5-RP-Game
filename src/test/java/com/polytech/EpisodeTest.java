@@ -51,7 +51,6 @@ public class EpisodeTest {
 
     @Test
     void testStatusChangesToValidatedOnlyWhenBothValidate() {
-        // Test case where owner != mj (separate users)
         MeneurDeJeu differentMJ = new MeneurDeJeu("differentMJ", "differentMJ@test.com");
         episode.validate(owner, owner, differentMJ); // Player validates
         episode.validate(differentMJ, owner, differentMJ);   // MJ validates
@@ -60,7 +59,6 @@ public class EpisodeTest {
 
     @Test
     void testStatusChangesToValidatedWhenOwnerIsMJAndValidatesOnce() {
-        // Test case where owner == mj (same user)
         MeneurDeJeu ownerAsMJ = new MeneurDeJeu(owner.getPseudo(), owner.getEmail()); // Same pseudo as owner
         episode.validate(owner, owner, ownerAsMJ); // Owner validates as player, then MJ validates
         assertEquals(Episode.Status.VALIDATED, episode.getStatut());
@@ -68,12 +66,10 @@ public class EpisodeTest {
 
     @Test
     void testCannotValidateAlreadyValidatedEpisode() {
-        // First validate both
         episode.validate(owner, owner, mj);
         episode.validate(mj, owner, mj);
         assertEquals(Episode.Status.VALIDATED, episode.getStatut());
 
-        // Try to validate again
         assertThrows(IllegalStateException.class, () -> {
             episode.validate(owner, owner, mj);
         });
@@ -81,12 +77,10 @@ public class EpisodeTest {
 
     @Test
     void testIllegalStateExceptionWhenTryingToEditValidatedEpisode() {
-        // First validate the episode
         episode.validate(owner, owner, mj);
         episode.validate(mj, owner, mj);
         assertEquals(Episode.Status.VALIDATED, episode.getStatut());
 
-        // Try to modify - should throw exception
         assertThrows(IllegalStateException.class, () -> {
             episode.setDateRelative("New Date");
         });

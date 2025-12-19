@@ -14,7 +14,6 @@ public class CreationPersonnagePanel extends JPanel {
     private ApplicationGUI mainApp;
     private PersonnageController personnageCtrl;
 
-    // Player creation components
     private JTextField txtNom;
     private JTextField txtProfession;
     private JTextField txtDateNaissance;
@@ -22,7 +21,6 @@ public class CreationPersonnagePanel extends JPanel {
     private JTextArea txtBiographieInitiale;
     private JButton btnProposerPersonnage;
 
-    // MJ validation components
     private JTable tblPersonnagesProposes;
     private JButton btnAccepter;
     private JButton btnRefuser;
@@ -37,14 +35,11 @@ public class CreationPersonnagePanel extends JPanel {
     private void initializeComponents() {
         setLayout(new BorderLayout());
 
-        // Create tabbed pane for different roles
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        // Player tab
         JPanel playerPanel = createPlayerPanel();
         tabbedPane.addTab("Création (Joueur)", playerPanel);
 
-        // MJ tab
         JPanel mjPanel = createMJPanel();
         tabbedPane.addTab("Validation (MJ)", mjPanel);
 
@@ -56,7 +51,6 @@ public class CreationPersonnagePanel extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
 
-        // Title
         JLabel titleLabel = new JLabel("Création d'un Nouveau Personnage");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
         gbc.gridx = 0;
@@ -64,7 +58,6 @@ public class CreationPersonnagePanel extends JPanel {
         gbc.gridwidth = 2;
         panel.add(titleLabel, gbc);
 
-        // Name field
         gbc.gridwidth = 1;
         gbc.gridy = 1;
         panel.add(new JLabel("Nom:"), gbc);
@@ -72,7 +65,6 @@ public class CreationPersonnagePanel extends JPanel {
         txtNom = new JTextField(20);
         panel.add(txtNom, gbc);
 
-        // Profession field
         gbc.gridx = 0;
         gbc.gridy = 2;
         panel.add(new JLabel("Profession:"), gbc);
@@ -80,7 +72,6 @@ public class CreationPersonnagePanel extends JPanel {
         txtProfession = new JTextField(20);
         panel.add(txtProfession, gbc);
 
-        // Birth date field
         gbc.gridx = 0;
         gbc.gridy = 3;
         panel.add(new JLabel("Date de Naissance:"), gbc);
@@ -88,7 +79,6 @@ public class CreationPersonnagePanel extends JPanel {
         txtDateNaissance = new JTextField(20);
         panel.add(txtDateNaissance, gbc);
 
-        // Universe selection
         gbc.gridx = 0;
         gbc.gridy = 4;
         panel.add(new JLabel("Univers:"), gbc);
@@ -100,7 +90,6 @@ public class CreationPersonnagePanel extends JPanel {
         cmbUnivers.addItem("Univers Cyberpunk");
         panel.add(cmbUnivers, gbc);
 
-        // Initial biography field
         gbc.gridx = 0;
         gbc.gridy = 5;
         panel.add(new JLabel("Biographie Initiale:"), gbc);
@@ -111,7 +100,6 @@ public class CreationPersonnagePanel extends JPanel {
         JScrollPane bioScroll = new JScrollPane(txtBiographieInitiale);
         panel.add(bioScroll, gbc);
 
-        // Create button
         gbc.gridx = 0;
         gbc.gridy = 6;
         gbc.gridwidth = 2;
@@ -125,12 +113,10 @@ public class CreationPersonnagePanel extends JPanel {
     private JPanel createMJPanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
-        // Title
         JLabel titleLabel = new JLabel("Validation des Personnages Proposés", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
         panel.add(titleLabel, BorderLayout.NORTH);
 
-        // Table for proposed characters
         String[] columnNames = {"Nom", "Profession", "Date Naissance", "Joueur"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
@@ -142,7 +128,6 @@ public class CreationPersonnagePanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane(tblPersonnagesProposes);
         panel.add(scrollPane, BorderLayout.CENTER);
 
-        // Buttons panel
         JPanel buttonsPanel = new JPanel(new FlowLayout());
         btnAccepter = new JButton("Accepter");
         btnAccepter.addActionListener(new ValidationListener());
@@ -165,7 +150,7 @@ public class CreationPersonnagePanel extends JPanel {
         List<Personnage> personnages = personnageCtrl.getPersonnages();
 
         for (Personnage p : personnages) {
-            if (p.getMeneurDeJeu() == null) { // Only show unvalidated characters
+            if (p.getMeneurDeJeu() == null) { 
                 Object[] row = {
                     p.getNom(),
                     p.getProfession(),
@@ -200,7 +185,6 @@ public class CreationPersonnagePanel extends JPanel {
                         nom, dateNaissance, profession, "",
                         universSelectionne, joueur.getPseudo());
 
-                    // Add initial biography episode if provided
                     if (!biographieInitiale.isEmpty()) {
                         personnageCtrl.ajouterEpisodeBiographieInitiale(nom, biographieInitiale, dateNaissance);
                     }
@@ -210,13 +194,11 @@ public class CreationPersonnagePanel extends JPanel {
                         "Succès",
                         JOptionPane.INFORMATION_MESSAGE);
 
-                    // Clear fields
                     txtNom.setText("");
                     txtProfession.setText("");
                     txtDateNaissance.setText("");
                     txtBiographieInitiale.setText("");
 
-                    // Refresh MJ view
                     refreshMJTable();
 
                 } catch (Exception ex) {

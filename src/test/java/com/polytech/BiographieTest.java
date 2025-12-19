@@ -22,7 +22,6 @@ public class BiographieTest {
         mj = new MeneurDeJeu("mj", "mj@test.com");
         visitor = new Utilisateur("visitor", "visitor@test.com");
 
-        // Create an episode with some paragraphs
         episode = new Episode("Test Date");
         ParagrapheSecret publicPara = new ParagrapheSecret("Public content", false);
         ParagrapheSecret secretPara = new ParagrapheSecret("Secret content", true);
@@ -36,7 +35,6 @@ public class BiographieTest {
     void testVisitorReceivesFilteredListSecretsRemoved() {
         List<ParagrapheSecret> visibleParagraphs = biographie.getVisibleParagraphs(visitor, owner, mj);
 
-        // Should only contain the public paragraph
         assertEquals(1, visibleParagraphs.size());
         assertEquals("Public content", visibleParagraphs.get(0).getTexte());
         assertFalse(visibleParagraphs.get(0).isSecret());
@@ -46,10 +44,8 @@ public class BiographieTest {
     void testMJReceivesFullList() {
         List<ParagrapheSecret> visibleParagraphs = biographie.getVisibleParagraphs(mj, owner, mj);
 
-        // Should contain both public and secret paragraphs
         assertEquals(2, visibleParagraphs.size());
 
-        // Check that both types are present
         boolean hasPublic = visibleParagraphs.stream().anyMatch(p -> !p.isSecret());
         boolean hasSecret = visibleParagraphs.stream().anyMatch(p -> p.isSecret());
 
@@ -61,10 +57,8 @@ public class BiographieTest {
     void testOwnerReceivesFullList() {
         List<ParagrapheSecret> visibleParagraphs = biographie.getVisibleParagraphs(owner, owner, mj);
 
-        // Should contain both public and secret paragraphs
         assertEquals(2, visibleParagraphs.size());
 
-        // Check that both types are present
         boolean hasPublic = visibleParagraphs.stream().anyMatch(p -> !p.isSecret());
         boolean hasSecret = visibleParagraphs.stream().anyMatch(p -> p.isSecret());
 

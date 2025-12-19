@@ -8,7 +8,6 @@ public class App {
     public static void main(String[] args) {
         System.out.println("Bienvenue dans l'application de gestion de rôles !");
 
-        // Initialize dummy data
         Univers univers = new Univers("Univers des Pirates");
         UniversRepository.getInstance().ajouterUnivers(univers);
 
@@ -21,27 +20,22 @@ public class App {
         PersonnageController personnageCtrl = new PersonnageController();
         EpisodeController episodeCtrl = new EpisodeController();
 
-        // Scenario: Create a character
         System.out.println("Création d'un personnage...");
         Personnage personnage = personnageCtrl.creerPersonnage("Capitaine Jack", "An 1", "Pirate", "jack.jpg", "Univers des Pirates", "Joueur1");
         System.out.println("Personnage créé: " + personnage.getNom());
 
-        // MJ validates
         System.out.println("MJ valide le personnage...");
         personnageCtrl.accepterPersonnage("Capitaine Jack", "MJ1");
         System.out.println("Personnage validé par MJ: " + personnage.getMeneurDeJeu().getPseudo());
 
-        // Add an episode
         System.out.println("Ajout d'un épisode...");
         Episode episode = episodeCtrl.creerEpisode("Capitaine Jack", "An 2", "Le capitaine découvre un trésor.", "Joueur1");
         System.out.println("Épisode créé: statut " + episode.getStatut());
 
-        // Validate by player
         System.out.println("Validation par le joueur...");
         episodeCtrl.validerEpisode("Capitaine Jack", "An 2", "Joueur1");
         System.out.println("Épisode après validation joueur: " + episode.getStatut());
 
-        // Validate by MJ
         System.out.println("Validation par le MJ...");
         episodeCtrl.validerEpisode("Capitaine Jack", "An 2", "MJ1");
         System.out.println("Épisode final: " + episode.getStatut());

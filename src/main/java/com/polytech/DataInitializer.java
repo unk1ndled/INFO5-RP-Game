@@ -5,7 +5,6 @@ import com.polytech.repository.*;
 
 public class DataInitializer {
     public static void initializeDefaultData() {
-        // Create default users
         Univers univers = new Univers("Univers des Pirates");
         UniversRepository.getInstance().ajouterUnivers(univers);
 

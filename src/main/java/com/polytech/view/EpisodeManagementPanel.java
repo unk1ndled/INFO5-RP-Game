@@ -13,11 +13,9 @@ public class EpisodeManagementPanel extends JPanel {
     private ApplicationGUI mainApp;
     private EpisodeController episodeCtrl;
 
-    // Character selection
     private JComboBox<String> cmbPersonnages;
     private JButton btnRefreshPersonnages;
 
-    // Episode creation
     private JTextField txtEpisodeDate;
     private JTextArea txtParagraphContent;
     private JCheckBox chkParagraphSecret;
@@ -27,20 +25,16 @@ public class EpisodeManagementPanel extends JPanel {
     private DefaultListModel<String> paragraphModel;
     private JButton btnSaveEpisodeDraft;
 
-    // Draft confirmation
     private JList<String> lstDrafts;
     private DefaultListModel<String> draftModel;
     private JButton btnConfirmDraft;
 
-    // Status display
     private JLabel lblStatus;
     private JTextArea txtDisplayContent;
 
-    // Current episode being worked on
     private Episode currentEpisode;
     private Personnage selectedPersonnage;
 
-    // Track paragraphs being built
     private java.util.List<ParagrapheSecret> episodeParagraphs;
 
     public EpisodeManagementPanel(ApplicationGUI mainApp) {
@@ -53,15 +47,12 @@ public class EpisodeManagementPanel extends JPanel {
     private void initializeComponents() {
         setLayout(new BorderLayout());
 
-        // Top panel - Character selection
         JPanel topPanel = createTopPanel();
         add(topPanel, BorderLayout.NORTH);
 
-        // Center panel - Content editing
         JPanel centerPanel = createCenterPanel();
         add(centerPanel, BorderLayout.CENTER);
 
-        // Bottom panel - Status and display
         JPanel bottomPanel = createBottomPanel();
         add(bottomPanel, BorderLayout.SOUTH);
     }
@@ -85,17 +76,13 @@ public class EpisodeManagementPanel extends JPanel {
         JTabbedPane tabbedPane = new JTabbedPane();
         episodeParagraphs = new java.util.ArrayList<>();
 
-        // Tab 1: Episode Creation
         JPanel creationPanel = new JPanel(new BorderLayout());
 
-        // Split panel for paragraph creation and episode building
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
-        // Left panel - Paragraph creation
         JPanel leftPanel = createParagraphCreationPanel();
         splitPane.setLeftComponent(leftPanel);
 
-        // Right panel - Episode building
         JPanel rightPanel = createEpisodeBuildingPanel();
         splitPane.setRightComponent(rightPanel);
 
@@ -104,7 +91,6 @@ public class EpisodeManagementPanel extends JPanel {
 
         tabbedPane.addTab("Créer Épisode", creationPanel);
 
-        // Tab 2: Draft Confirmation
         JPanel confirmationPanel = createDraftConfirmationPanel();
         tabbedPane.addTab("Confirmer Brouillons", confirmationPanel);
 
@@ -117,7 +103,6 @@ public class EpisodeManagementPanel extends JPanel {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createTitledBorder("Création de Paragraphes"));
 
-        // Episode date field
         JPanel datePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         datePanel.add(new JLabel("Date de l'épisode:"));
         txtEpisodeDate = new JTextField(15);
@@ -125,7 +110,6 @@ public class EpisodeManagementPanel extends JPanel {
         datePanel.add(txtEpisodeDate);
         panel.add(datePanel, BorderLayout.NORTH);
 
-        // Paragraph content
         JPanel contentPanel = new JPanel(new BorderLayout());
         contentPanel.setBorder(BorderFactory.createTitledBorder("Contenu du Paragraphe"));
 
@@ -135,7 +119,6 @@ public class EpisodeManagementPanel extends JPanel {
         JScrollPane contentScroll = new JScrollPane(txtParagraphContent);
         contentPanel.add(contentScroll, BorderLayout.CENTER);
 
-        // Secret checkbox
         JPanel secretPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         chkParagraphSecret = new JCheckBox("Marquer comme SECRET");
         chkParagraphSecret.setToolTipText("Ce paragraphe ne sera visible que par le propriétaire et le MJ");
@@ -144,7 +127,6 @@ public class EpisodeManagementPanel extends JPanel {
 
         panel.add(contentPanel, BorderLayout.CENTER);
 
-        // Add paragraph button
         JPanel buttonPanel = new JPanel(new FlowLayout());
         btnAddParagraph = new JButton("Ajouter ce Paragraphe");
         btnAddParagraph.addActionListener(new ParagraphActionListener());
@@ -158,7 +140,6 @@ public class EpisodeManagementPanel extends JPanel {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createTitledBorder("Construction de l'Épisode"));
 
-        // Paragraphs list
         JPanel listPanel = new JPanel(new BorderLayout());
         listPanel.setBorder(BorderFactory.createTitledBorder("Paragraphes de l'épisode"));
 
@@ -167,7 +148,6 @@ public class EpisodeManagementPanel extends JPanel {
         JScrollPane listScroll = new JScrollPane(lstParagraphs);
         listPanel.add(listScroll, BorderLayout.CENTER);
 
-        // Remove paragraph button
         JPanel removePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         btnRemoveParagraph = new JButton("Retirer le Paragraphe Sélectionné");
         btnRemoveParagraph.addActionListener(new ParagraphActionListener());
@@ -176,7 +156,6 @@ public class EpisodeManagementPanel extends JPanel {
 
         panel.add(listPanel, BorderLayout.CENTER);
 
-        // Episode action buttons
         JPanel actionPanel = new JPanel(new FlowLayout());
         btnSaveEpisodeDraft = new JButton("Sauvegarder Épisode comme Brouillon");
         btnSaveEpisodeDraft.addActionListener(new EpisodeActionListener());
@@ -190,7 +169,6 @@ public class EpisodeManagementPanel extends JPanel {
     private JPanel createBottomPanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
-        // Status panel
         JPanel statusPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         statusPanel.add(new JLabel("Statut: "));
         lblStatus = new JLabel("Aucun épisode sélectionné");
@@ -198,7 +176,6 @@ public class EpisodeManagementPanel extends JPanel {
         statusPanel.add(lblStatus);
         panel.add(statusPanel, BorderLayout.NORTH);
 
-        // Display area
         JPanel displayPanel = new JPanel(new BorderLayout());
         displayPanel.setBorder(BorderFactory.createTitledBorder("Contenu Affiché"));
         txtDisplayContent = new JTextArea(5, 50);
@@ -229,7 +206,7 @@ public class EpisodeManagementPanel extends JPanel {
     private void onPersonnageSelected() {
         String selected = (String) cmbPersonnages.getSelectedItem();
         if (selected != null) {
-            String nomPersonnage = selected.split(" \\(")[0]; // Extract name before parentheses
+            String nomPersonnage = selected.split(" \\(")[0]; 
             selectedPersonnage = mainApp.getPersonnageController().findByNom(nomPersonnage);
             updateDisplay();
             updateDraftList();
@@ -243,14 +220,12 @@ public class EpisodeManagementPanel extends JPanel {
             return;
         }
 
-        // Check if character is validated
         if (selectedPersonnage.getMeneurDeJeu() == null) {
             lblStatus.setText("Personnage non validé par MJ");
             txtDisplayContent.setText("Ce personnage n'a pas encore été validé par un MJ.");
             return;
         }
 
-        // Sort episodes chronologically by dateRelative
         List<Episode> episodes = selectedPersonnage.getBiographie().getEpisodes()
                 .stream()
                 .sorted((e1, e2) -> e1.getDateRelative().compareTo(e2.getDateRelative()))
@@ -264,12 +239,10 @@ public class EpisodeManagementPanel extends JPanel {
 
         lblStatus.setText("Épisodes: " + episodes.size() + " (triés chronologiquement)");
 
-        // Display all episodes content based on permissions
         Utilisateur currentUser = mainApp.getCurrentUser();
         StringBuilder content = new StringBuilder();
 
         for (Episode episode : episodes) {
-            // Show all episodes (drafts and validated)
             String episodeTitle = "=== " + episode.getDateRelative();
             if (episode.getStatut() == Episode.Status.DRAFT) {
                 episodeTitle += " [BROUILLON]";
@@ -321,13 +294,11 @@ public class EpisodeManagementPanel extends JPanel {
                 ParagrapheSecret paragraph = new ParagrapheSecret(content, isSecret);
                 episodeParagraphs.add(paragraph);
 
-                // Update the list display
                 String displayText = (isSecret ? "[SECRET] " : "[PUBLIC] ") +
                     content.substring(0, Math.min(50, content.length())) +
                     (content.length() > 50 ? "..." : "");
                 paragraphModel.addElement(displayText);
 
-                // Clear the input
                 txtParagraphContent.setText("");
                 chkParagraphSecret.setSelected(false);
 
@@ -358,7 +329,6 @@ public class EpisodeManagementPanel extends JPanel {
                 return;
             }
 
-            // Check if character is validated
             if (selectedPersonnage.getMeneurDeJeu() == null) {
                 JOptionPane.showMessageDialog(mainApp,
                     "Ce personnage n'a pas encore été validé par un MJ.",
@@ -371,12 +341,11 @@ public class EpisodeManagementPanel extends JPanel {
 
             String episodeDate = txtEpisodeDate.getText().trim();
             if (episodeDate.isEmpty()) {
-                episodeDate = "An 1"; // Default if empty
+                episodeDate = "An 1"; 
             }
 
             try {
                 if (e.getSource() == btnSaveEpisodeDraft) {
-                    // Confirmation dialog for draft saving
                     int result = JOptionPane.showConfirmDialog(mainApp,
                         "Êtes-vous sûr de vouloir sauvegarder cet épisode comme brouillon?\n\n" +
                         "Contenu: " + episodeParagraphs.size() + " paragraphes\n" +
@@ -390,12 +359,10 @@ public class EpisodeManagementPanel extends JPanel {
                         return;
                     }
 
-                    // Create draft episode
                     currentEpisode = episodeCtrl.creerEpisodeDraft(
                         selectedPersonnage.getNom(),
                         episodeDate);
 
-                    // Add all paragraphs to the episode
                     for (ParagrapheSecret para : episodeParagraphs) {
                         episodeCtrl.ajouterParagrapheAEpisode(
                             selectedPersonnage.getNom(),
@@ -410,10 +377,8 @@ public class EpisodeManagementPanel extends JPanel {
                         "Sauvegarde réussie",
                         JOptionPane.INFORMATION_MESSAGE);
 
-                    // Clear the episode building area
                     clearEpisodeBuilding();
 
-                    // Refresh all views to show the new episode
                     mainApp.refreshAllViews();
                 } else if (e.getSource() == btnConfirmDraft) {
                     int selectedIndex = lstDrafts.getSelectedIndex();
@@ -426,10 +391,8 @@ public class EpisodeManagementPanel extends JPanel {
                     }
 
                     String selectedItem = draftModel.getElementAt(selectedIndex);
-                    // Parse the dateRelative from the display text (e.g., "An 1 - [Validation Joueur] (3 paragraphes)")
                     String dateRelative = selectedItem.split(" - ")[0];
 
-                    // Confirmation dialog
                     boolean ownerIsMJ = selectedPersonnage.getJoueur().equals(selectedPersonnage.getMeneurDeJeu());
                     String validationMessage = ownerIsMJ ?
                         "Cette action validera complètement l'épisode." :
@@ -446,7 +409,6 @@ public class EpisodeManagementPanel extends JPanel {
                         return;
                     }
 
-                    // Validate the episode
                     episodeCtrl.validerEpisode(
                         selectedPersonnage.getNom(),
                         dateRelative,
@@ -461,7 +423,6 @@ public class EpisodeManagementPanel extends JPanel {
                         "Confirmation réussie",
                         JOptionPane.INFORMATION_MESSAGE);
 
-                    // Refresh all views and update draft list
                     mainApp.refreshAllViews();
                     updateDraftList();
                 }
@@ -481,7 +442,6 @@ public class EpisodeManagementPanel extends JPanel {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createTitledBorder("Confirmation de Brouillons"));
 
-        // Drafts list
         JPanel listPanel = new JPanel(new BorderLayout());
         listPanel.setBorder(BorderFactory.createTitledBorder("Brouillons en attente de validation"));
 
@@ -492,7 +452,6 @@ public class EpisodeManagementPanel extends JPanel {
 
         panel.add(listPanel, BorderLayout.CENTER);
 
-        // Confirm button
         JPanel buttonPanel = new JPanel(new FlowLayout());
         btnConfirmDraft = new JButton("Confirmer le Brouillon Sélectionné");
         btnConfirmDraft.addActionListener(new EpisodeActionListener());
@@ -520,13 +479,11 @@ public class EpisodeManagementPanel extends JPanel {
                 String validationType = "";
 
                 if (ownerIsMJ) {
-                    // If owner is MJ, show validation option only if not yet validated
                     if (currentUser.equals(owner) && (!episode.isValidatedByPlayer() || !episode.isValidatedByMJ())) {
                         canValidate = true;
                         validationType = "[Validation Requise]";
                     }
                 } else {
-                    // If owner is not MJ, show appropriate validation options
                     if (currentUser.equals(owner) && !episode.isValidatedByPlayer()) {
                         canValidate = true;
                         validationType = "[Validation Joueur]";
